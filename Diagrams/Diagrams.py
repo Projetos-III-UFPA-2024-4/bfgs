@@ -1,22 +1,22 @@
 from diagrams import Cluster, Diagram
 from diagrams.custom import Custom
-from diagrams.aws.database import DatabaseMigrationService, DMS
+from diagrams.aws.database import Dynamodb, DMS
 from diagrams.aws.general import Client, User
-from diagrams.aws.compute import Lambda
+from diagrams.aws.compute import Lambda, EC2
 
-with Diagram("Sistema dinamico de Semaforos", show=False, node_attr={"fontsize": "16", "fontname": "Arial"}):
+with Diagram("Sistema dinâmico de semáforos", show=False, node_attr={"fontsize": "16", "fontname": "Arial"}):
     with Cluster("API", graph_attr={"bgcolor": "lightblue"}):
-        tomtom = Custom("", r".\resources\TomTomSymbol.png")
-        another_api = Custom("Another API", r".\resources\API.png")
+        tomtom = Custom("", r"./resources/TomTomSymbol.png")
+        another_api = Custom("Another API", r"./resources/API.png")
         api = [tomtom, another_api]
 
     with Cluster("Cloud", graph_attr={"bgcolor": "#00CC99"}):
-        lambda_function = Lambda("Algoritm")
-        db = DMS("Database")
+        lambda_function = EC2("Algoritm")
+        db = Dynamodb("Database")
 
     with Cluster("Simulation", graph_attr={"bgcolor": "#FFCC66"}):
-        sumo = Custom("", r".\resources\SUMO.png")
-        traffic = Custom("Traffic Light", r".\resources\traffic-light.png")
+        sumo = Custom("", r"./resources/SUMO.png")
+        traffic = Custom("Traffic Light", r"./resources/traffic-light.png")
         simul = [sumo, traffic]
 
     with Cluster("Interface", graph_attr={"bgcolor": "#FFFF99"}):
