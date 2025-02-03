@@ -1,20 +1,20 @@
 from diagrams import Cluster, Diagram
 from diagrams.custom import Custom
-from diagrams.aws.database import DatabaseMigrationService, DMS
+from diagrams.aws.database import Dynamodb
 from diagrams.aws.general import Client, User
-from diagrams.aws.compute import Lambda, EC2
+from diagrams.aws.compute import EC2
 
-with Diagram("Sistema dinamico de Semaforos (Fluxograma)", show=False, node_attr={"fontsize": "16", "fontname": "Arial"}):
-    sumo = Custom("",r"C:\Users\machi\bfgs\Diagrams\resources\SUMO.png")
+with Diagram("Sistema Dinâmico de Semáforos (Fluxograma)", show=False, node_attr={"fontsize": "16", "fontname": "Arial"}):
+    sumo = Custom("",r"./resources/SUMO.png")
 
-    db_cong = DMS("Congestion DB")
-    db_semaf = DMS("Traffic Light DB")
+    db_cong = Dynamodb("Congestion DB")
+    db_semaf = Dynamodb("Traffic Light DB")
 
-    congestion_detec = Lambda("Congestion Detection")
+    congestion_detec = EC2("Congestion Detection")
 
-    inteligent_optimization = Lambda("Intelligent Optimization")
+    inteligent_optimization = EC2("Intelligent Optimization")
 
-    traffic_light_control = Lambda("Traffic Light Control")
+    traffic_light_control = EC2("Traffic Light Control")
     monitor = Client("Monitor")
     user = User("User")
 
