@@ -18,7 +18,7 @@ with Diagram("Sistema Dinâmico de Semáforos (Fluxograma)", show=False, node_at
     monitor = Client("Monitor")
     user = User("User")
 
-    sumo >> congestion_detec
+    sumo >> db_cong
     db_cong >> congestion_detec
     congestion_detec >> inteligent_optimization
     db_cong >> inteligent_optimization
