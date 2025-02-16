@@ -25,19 +25,23 @@ Sumo_config = [
 traci.start(Sumo_config)
 
 # Step 6: Define Variables
-vehicle_speed = 0
-total_speed = 0
+
+my_edge = 'Via3ToInter' #Aqui é onde mudados para qual via queremos analisar
 
 # Step 7: Define Functions
+
+def getNumberOfCarsInEdges(edge): #Pega o número de carros em uma via
+    num_cars = 0
+    if edge in traci.edge.getIDList():
+        num_cars = traci.edge.getLastStepVehicleNumber(edge)
+        print(f"Número de carros na via {edge}: {num_cars}")
 
 # Step 8: Take simulation steps until there are no more vehicles in the network
 while traci.simulation.getMinExpectedNumber() > 0:
     traci.simulationStep() # Move simulation forward 1 step
     # Here you can decide what to do with simulation data at each step
-    if 'Tl1' in traci.trafficlight.getIDList():
-        trafficlight_state = traci.trafficlight.getRedYellowGreenState('Tl1')
+    getNumberOfCarsInEdges(my_edge)
     # step_count = step_count + 1
-    print(f"Traffic Light State: {trafficlight_state}")
 
 # Step 9: Close connection between SUMO and Traci
 traci.close()
