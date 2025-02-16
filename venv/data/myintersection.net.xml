@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-02-15 23:23:16 by Eclipse SUMO netedit Version 1.22.0
+<neteditConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/neteditConfiguration.xsd">
+
+    <input>
+        <sumocfg-file value="C:\Users\machi\bfgs\venv\sources\myintersection.sumocfg"/>
+        <additional-files value=""/>
+        <route-files value="C:\Users\machi\bfgs\venv\sources\myintersection.rou.xml"/>
+        <sumo-net-file value="C:\Users\machi\bfgs\venv\sources\myintersection.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="C:\Users\machi\bfgs\venv\sources\myintersection.net.xml"/>
+    </output>
+
+    <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="0"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.50"/>
+        <rectangular-lane-cut value="0"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="0"/>
+    </pedestrian>
+
+    <netedit>
+        <ignore.routeelements value="false"/>
+    </netedit>
+
+</neteditConfiguration>
+-->
+
+<net version="1.20" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="-14.34,-74.71,142.32,7.42" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
+
+    <edge id=":clusterJ5_J6_J7_J8_0" function="internal">
+        <lane id=":clusterJ5_J6_J7_J8_0_0" index="0" speed="13.89" length="14.48" shape="62.79,-28.62 48.31,-28.63"/>
+    </edge>
+    <edge id=":clusterJ5_J6_J7_J8_1" function="internal">
+        <lane id=":clusterJ5_J6_J7_J8_1_0" index="0" speed="13.89" length="14.48" shape="57.24,-37.45 57.05,-22.96"/>
+    </edge>
+    <edge id=":clusterJ5_J6_J7_J8_2" function="internal">
+        <lane id=":clusterJ5_J6_J7_J8_2_0" index="0" speed="13.89" length="14.48" shape="48.31,-31.83 62.79,-31.82"/>
+    </edge>
+    <edge id=":clusterJ5_J6_J7_J8_3" function="internal">
+        <lane id=":clusterJ5_J6_J7_J8_3_0" index="0" speed="13.89" length="14.48" shape="53.86,-23.00 54.05,-37.49"/>
+    </edge>
+
+    <edge id="Via1ToInter" from="J2" to="clusterJ5_J6_J7_J8" priority="-1" shape="55.06,7.42 55.60,-33.98">
+        <lane id="Via1ToInter_0" index="0" speed="13.89" length="30.41" shape="53.46,7.40 53.86,-23.00"/>
+    </edge>
+    <edge id="Via1ToN" from="clusterJ5_J6_J7_J8" to="J2" priority="-1" shape="55.49,-25.79 55.06,7.42">
+        <lane id="Via1ToN_0" index="0" speed="13.89" length="30.41" shape="57.05,-22.96 56.66,7.44"/>
+    </edge>
+    <edge id="Via2ToInter" from="J1" to="clusterJ5_J6_J7_J8" priority="-1" shape="142.32,-30.17 59.06,-30.22">
+        <lane id="Via2ToInter_0" index="0" speed="13.89" length="79.53" shape="142.32,-28.57 62.79,-28.62"/>
+    </edge>
+    <edge id="Via2ToN" from="clusterJ5_J6_J7_J8" to="J1" priority="-1" shape="52.04,-30.23 142.32,-30.17">
+        <lane id="Via2ToN_0" index="0" speed="13.89" length="79.53" shape="62.79,-31.82 142.32,-31.77"/>
+    </edge>
+    <edge id="Via3ToInter" from="J3" to="clusterJ5_J6_J7_J8" priority="-1" shape="56.13,-74.71 55.49,-25.79">
+        <lane id="Via3ToInter_0" index="0" speed="13.89" length="37.25" shape="57.73,-74.69 57.24,-37.45"/>
+    </edge>
+    <edge id="Via3ToN" from="clusterJ5_J6_J7_J8" to="J3" priority="-1" shape="55.60,-33.98 56.13,-74.71">
+        <lane id="Via3ToN_0" index="0" speed="13.89" length="37.25" shape="54.05,-37.49 54.53,-74.73"/>
+    </edge>
+    <edge id="Via4ToInter" from="J0" to="clusterJ5_J6_J7_J8" priority="-1" shape="-14.34,-30.27 52.04,-30.23">
+        <lane id="Via4ToInter_0" index="0" speed="13.89" length="62.65" shape="-14.34,-31.87 48.31,-31.83"/>
+    </edge>
+    <edge id="Via4ToN" from="clusterJ5_J6_J7_J8" to="J0" priority="-1" shape="59.06,-30.22 -14.34,-30.27">
+        <lane id="Via4ToN_0" index="0" speed="13.89" length="62.65" shape="48.31,-28.63 -14.34,-28.67"/>
+    </edge>
+
+    <tlLogic id="Tl1" type="static" programID="0" offset="0">
+        <phase duration="30" state="GrGr"/>
+        <phase duration="10" state="yryr"/>
+        <phase duration="30" state="rGrG"/>
+        <phase duration="10" state="ryry"/>
+    </tlLogic>
+
+    <junction id="J0" type="dead_end" x="-14.34" y="-30.27" incLanes="Via4ToN_0" intLanes="" shape="-14.34,-30.27 -14.34,-27.07 -14.34,-30.27"/>
+    <junction id="J1" type="dead_end" x="142.32" y="-30.17" incLanes="Via2ToN_0" intLanes="" shape="142.32,-30.17 142.32,-33.37 142.32,-30.17"/>
+    <junction id="J2" type="dead_end" x="55.06" y="7.42" incLanes="Via1ToN_0" intLanes="" shape="55.06,7.42 58.26,7.46 55.06,7.42"/>
+    <junction id="J3" type="dead_end" x="56.13" y="-74.71" incLanes="Via3ToN_0" intLanes="" shape="56.13,-74.71 52.93,-74.75 56.13,-74.71"/>
+    <junction id="clusterJ5_J6_J7_J8" type="traffic_light" x="55.55" y="-30.06" incLanes="Via2ToInter_0 Via3ToInter_0 Via4ToInter_0 Via1ToInter_0" intLanes=":clusterJ5_J6_J7_J8_0_0 :clusterJ5_J6_J7_J8_1_0 :clusterJ5_J6_J7_J8_2_0 :clusterJ5_J6_J7_J8_3_0" shape="62.79,-27.02 62.79,-33.42 60.57,-33.87 59.80,-34.42 59.26,-35.20 58.94,-36.20 58.84,-37.43 52.45,-37.51 51.96,-35.24 51.39,-34.45 50.59,-33.88 49.56,-33.54 48.31,-33.43 48.31,-27.03 50.53,-26.58 51.30,-26.03 51.84,-25.25 52.16,-24.25 52.26,-23.02 58.65,-22.94 59.14,-25.21 59.71,-26.00 60.51,-26.57 61.54,-26.91">
+        <request index="0" response="0000" foes="1010" cont="0"/>
+        <request index="1" response="0101" foes="0101" cont="0"/>
+        <request index="2" response="0000" foes="1010" cont="0"/>
+        <request index="3" response="0101" foes="0101" cont="0"/>
+    </junction>
+
+    <connection from="Via1ToInter" to="Via3ToN" fromLane="0" toLane="0" via=":clusterJ5_J6_J7_J8_3_0" tl="Tl1" linkIndex="3" dir="s" state="o"/>
+    <connection from="Via2ToInter" to="Via4ToN" fromLane="0" toLane="0" via=":clusterJ5_J6_J7_J8_0_0" tl="Tl1" linkIndex="0" dir="s" state="O"/>
+    <connection from="Via3ToInter" to="Via1ToN" fromLane="0" toLane="0" via=":clusterJ5_J6_J7_J8_1_0" tl="Tl1" linkIndex="1" dir="s" state="o"/>
+    <connection from="Via4ToInter" to="Via2ToN" fromLane="0" toLane="0" via=":clusterJ5_J6_J7_J8_2_0" tl="Tl1" linkIndex="2" dir="s" state="O"/>
+
+    <connection from=":clusterJ5_J6_J7_J8_0" to="Via4ToN" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":clusterJ5_J6_J7_J8_1" to="Via1ToN" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":clusterJ5_J6_J7_J8_2" to="Via2ToN" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":clusterJ5_J6_J7_J8_3" to="Via3ToN" fromLane="0" toLane="0" dir="s" state="M"/>
+
+</net>
