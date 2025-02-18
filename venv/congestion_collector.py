@@ -1,4 +1,5 @@
 # Step 1: Add modules to provide access to specific libraries and functions
+import json
 import os # Module provides functions to handle file paths, directories, environment variables
 import sys # Module provides access to Python-specific system parameters and functions
 
@@ -13,12 +14,15 @@ else:
 import traci # Static network information (such as reading and analyzing network files)
 
 # Step 4: Define Sumo configuration
+with open("config_sumo.json","r") as file:
+    config = json.load(file)
+
 Sumo_config = [
-    'sumo-gui',
-    '-c', r'data\myintersection.sumocfg',
-    '--step-length', '0.05',
-    '--delay', '200',
-    '--lateral-resolution', '0.1'
+    config["sumo_binary"],
+    '-c', config["config_file"],
+    '--step-length', config["step_length"],
+    '--delay', config["delay"],
+    '--lateral-resolution', config["delay"]
 ]
 
 # Step 5: Open connection between SUMO and Traci
