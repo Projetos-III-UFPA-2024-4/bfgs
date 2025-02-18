@@ -13,6 +13,7 @@ def getIDtls():
 def getIdedges():
     return print("IDs das Vias:", traci.edge.getIDList())
 
+getIdedges()
 
 # Finaliza a simulação
 traci.close()
