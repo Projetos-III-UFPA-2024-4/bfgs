@@ -1,0 +1,7 @@
+{
+    "sumo_binary": "sumo",
+    "config_file": "data/myintersection.sumocfg",
+    "step_length": "0.05",
+    "delay": "200",
+    "lateral_resolution": "0.1"
+}
