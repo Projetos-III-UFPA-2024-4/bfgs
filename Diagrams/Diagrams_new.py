@@ -10,7 +10,7 @@ with Diagram("Sistema Dinâmico de Semáforos (Fluxograma)", show=False, node_at
     db_cong = Dynamodb("Congestion DB")
     db_semaf = Dynamodb("Traffic Light DB")
 
-    congestion_detec = EC2("Congestion Detection")
+    congestion_colector = EC2("Congestion Colector")
 
     inteligent_optimization = EC2("Intelligent Optimization")
 
@@ -18,9 +18,7 @@ with Diagram("Sistema Dinâmico de Semáforos (Fluxograma)", show=False, node_at
     monitor = Client("Monitor")
     user = User("User")
 
-    sumo >> db_cong
-    db_cong >> congestion_detec
-    congestion_detec >> inteligent_optimization
+    sumo >> congestion_colector >> db_cong
     db_cong >> inteligent_optimization
 
     inteligent_optimization >> db_semaf

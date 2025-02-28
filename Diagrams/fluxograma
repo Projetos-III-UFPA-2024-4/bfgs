@@ -1,0 +1,24 @@
+digraph Fluxograma {
+	A [label="Início"]
+	B [label="Coletar dados do SUMO
+ (Dados de trafego)"]
+	C [label="Banco de dados do congestionamento"]
+	D [label="Calcula o tempo de ciclo otimizado (Formula de Webster)"]
+	if [label="Mudança no tempo de ciclo é significante?"]
+	E [label="Define o tempo de verde para cada via"]
+	F [label="Banco de dados dos semáforos"]
+	G [label="Controlador dos semáforos"]
+	H [label=Sumo]
+	Wait [label=Espera]
+	A -> B
+	B -> C
+	C -> D
+	D -> if
+	if -> Wait [label="Não é significante"]
+	if -> E [label="É significante"]
+	Wait -> B [label="Apos T segundos"]
+	E -> F
+	F -> G
+	G -> H
+	H -> B [label="Apos T tempo"]
+}
