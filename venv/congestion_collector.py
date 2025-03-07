@@ -9,6 +9,7 @@ if 'SUMO_HOME' in os.environ:
     sys.path.append(tools)
 else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
+    
 
 # Step 3: Add Traci module to provide access to specific libraries and functions
 import traci # Static network information (such as reading and analyzing network files)
@@ -43,8 +44,7 @@ def getNumberOfCarsInEdges(edge): #Pega o número de carros em uma via
 # Step 8: Take simulation steps until there are no more vehicles in the network
 while traci.simulation.getMinExpectedNumber() > 0:
     traci.simulationStep() # Move simulation forward 1 step
-    # Here you can decide what to do with simulation data at each step
-    getNumberOfCarsInEdges(my_edge)
+    # Here you can decide what to do with simulation data at each s
     # step_count = step_count + 1
 
 # Step 9: Close connection between SUMO and Traci

@@ -1,6 +1,7 @@
 #Criei esse code para podemos pegar os ids de algo que a gente precise
 import traci
 import json
+from myfunctions import getGreenPhases,getCriticalFlowRatio
 
 # Inicie o SUMO com TraCI
 with open("config_sumo.json","r") as file:
@@ -27,9 +28,12 @@ def getIdedges():
 def getNextTLS():
     return print()
 
+mytl = "Tl1"
+
 if __name__ == "__main__":
     traci.start(Sumo_config)
 
-    getIdedges()
+    getIDtls()
+    print(getCriticalFlowRatio(edges))
 
     traci.close() # Finaliza a simulação
