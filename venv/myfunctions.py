@@ -11,6 +11,11 @@ def getGreenPhases(tlsID):
     num_phases = int(len(temp)/2)
     return num_phases
 
+def getUsefuledges():
+    edgesID = traci.edge.getIDList()
+    usefuledgesID = [item for item in edgesID if not item.startswith(":cluster")]
+    return usefuledgesID
+
 def getCriticalFlowRatio(edges, time_window):
     critical_flow_ratios = {}
 
