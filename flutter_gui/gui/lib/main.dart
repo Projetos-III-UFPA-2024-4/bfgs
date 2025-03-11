@@ -50,6 +50,34 @@ class _MapScreenState extends State<MapScreen> {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
+               MarkerLayer(
+                markers: [
+                  Marker(
+                  child: ElevatedButton(onPressed: () { print('l1'); }, child: null),
+                  point: LatLng(-1.412062, -48.442478), //-1.412062/-48.442478
+                  width: 80,
+                  height: 80
+                  ),
+                  Marker(
+                  child: ElevatedButton(onPressed: () { print('l2'); }, child: null),
+                  point: LatLng(-1.412373, -48.442162), // -1.412373/-48.442162
+                  width: 80,
+                  height: 80
+                  ),
+                  Marker(
+                  child: ElevatedButton(onPressed: () { print('l3'); }, child: null),
+                  point: LatLng(-1.412029, -48.442248), // -1.412029/-48.442248
+                  width: 80,
+                  height: 80
+                  ),
+                  Marker(
+                  child: ElevatedButton(onPressed: () { print('l4'); }, child: null),
+                  point: LatLng(-1.412359, -48.442626), // -1.412359/-48.442626
+                  width: 80,
+                  height: 80
+                  ),
+    ],
+)
               ],
             ),
           ),

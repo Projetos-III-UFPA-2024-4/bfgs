@@ -3,8 +3,8 @@ class TrafficLight {
   String? state;
 
   trafficLightMap() {
-    var mapping = Map<String, dynamic>();
-    mapping['id'] = id ?? null;
+    var mapping = <String, dynamic>{};
+    mapping['id'] = id;
     mapping['state'] = state!;
 
     return mapping;
