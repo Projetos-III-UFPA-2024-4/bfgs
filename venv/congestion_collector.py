@@ -2,6 +2,7 @@
 import json
 import os # Module provides functions to handle file paths, directories, environment variables
 import sys # Module provides access to Python-specific system parameters and functions
+import myfunctions
 
 # Step 2: Establish path to SUMO (SUMO_HOME)
 if 'SUMO_HOME' in os.environ:
@@ -35,17 +36,37 @@ my_edge = 'Via3ToInter' #Aqui é onde mudados para qual via queremos analisar
 
 # Step 7: Define Functions
 
-def getNumberOfCarsInEdges(edge): #Pega o número de carros em uma via
-    num_cars = 0
-    if edge in traci.edge.getIDList():
-        num_cars = traci.edge.getLastStepVehicleNumber(edge)
-        print(f"Número de carros na via {edge}: {num_cars}")
+
+
+traffic_lights = myfunctions.getAllTrafficLights()
+
+# **Exibir a estrutura detectada**
+print("\n📌 Semáforos e Vias Detectadas:")
+for tls_id, data in traffic_lights.items():
+    print(f"\n🔹 Semáforo: {tls_id}")
+    print(f"   - Tempo de ciclo: {data['time_window']} segundos")
+    for edge, lanes in data["edges"].items():
+        print(f"   - Via: {edge} | Faixas: {lanes}")
 
 # Step 8: Take simulation steps until there are no more vehicles in the network
 while traci.simulation.getMinExpectedNumber() > 0:
     traci.simulationStep() # Move simulation forward 1 step
     # Here you can decide what to do with simulation data at each s
-    # step_count = step_count + 1
+    step = traci.simulation.getTime()
+
+    for tls_id, data in traffic_lights.items():
+        time_window = data["time_window"]
+        edges = data["edges"]
+
+        if step % time_window == 0:
+            Y_values = myfunctions.getCriticalFlowRatio(edges,time_window)
+            Y_total = sum(Y_values.values())
+
+            C_o = myfunctions.calculate_webster_cycle(Y_total)
+
+            print(f"\nStep {step}: Critical Flow Ratios (Y_i) para {tls_id}")
+            for edge, Y_i in Y_values.items():
+                print(f" - {edge}: {Y_i:.4f}")            
 
 # Step 9: Close connection between SUMO and Traci
 traci.close()
