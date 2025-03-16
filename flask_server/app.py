@@ -1,26 +1,42 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import mysql
+import mysql.connector
+from dotenv import load_dotenv
+import os
+from os.path import join, dirname
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Permite requisições do Flutter
 
+DBADDR = os.environ.get("DBADDR")
+DBPORT = os.environ.get("DBPORT")
+DBUSER = os.environ.get("DBUSER")
+DBPASS = os.environ.get("DBPASS")
+DBTABLE = os.environ.get("DBTABLE")
+DB = os.environ.get("DB")
+
+
 # Conectar ao banco de dados MySQL remoto
 db = mysql.connector.connect(
-    host="your_remote_host",  # IP ou domínio do servidor MySQL
-    user="your_user",
-    password="your_password",
-    database="your_database"
+    host=DBADDR,  # IP ou domínio do servidor MySQL
+    user=DBUSER,
+    password=DBPASS,
+    database=DB,
 )
 
 cursor = db.cursor(dictionary=True)
 
 # Endpoint para buscar usuários
-@app.route('/users', methods=['GET'])
-def get_users():
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    return jsonify(users)
+@app.route('/traffic-state', methods=['GET'])
+def get_traffic_state():
+    cursor.execute("SELECT * FROM congestion_state.traffic_updates")
+    traffic_state = cursor.fetchall()
+    return jsonify(traffic_state)
 
 # Endpoint para adicionar um usuário
 @app.route('/users', methods=['POST'])

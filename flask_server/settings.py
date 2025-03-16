@@ -6,5 +6,9 @@ from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
-DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+
+DBADDR = os.environ.get("DBADDR")
+DBPORT = os.environ.get("DBPORT")
+DBUSER = os.environ.get("DBUSER")
+DBPASS = os.environ.get("DBPASS")
+DBTABLE = os.environ.get("DBTAABLE")

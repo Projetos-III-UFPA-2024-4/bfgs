@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gui/wigets/flutter_map_custom.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import './db_helper/api_service.dart';
 
 main() {
   dotenv.load(fileName: ".env");
   runApp(MyApp());
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -41,7 +41,20 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  List trafficUpdates = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadTrafficUpdates();
+  }
+
+  Future<void> _loadTrafficUpdates() async {
+    trafficUpdates = await ApiService.fetchTrafficUpdates();
+    setState(() {
+      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,20 +65,14 @@ class _MapScreenState extends State<MapScreen> {
           Container(
             width: 250,
             color: Colors.green[100],
-            child: ListView(
-              children: List.generate(
-                5,
-                (index) => ListTile(
-                  leading: Icon(Icons.place, color: Colors.green[700]),
-                  title: Text(
-                    'Local $index',
-                    style: TextStyle(color: Colors.green[900]),
-                  ),
-                  onTap: () {
-                    print('Clicou no Local $index');
-                  },
-                ),
-              ),
+            child: ListView.builder(
+              itemCount: trafficUpdates.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text("${trafficUpdates[index]['traffic_light_id']}"),
+                  subtitle: Text("Lost time: ${trafficUpdates[index]['lost_time']}"),
+                );
+              },
             ),
           ),
         ],
