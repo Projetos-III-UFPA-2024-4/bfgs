@@ -5,12 +5,13 @@ class ApiService {
   static const String baseUrl = 'http://localhost:5000';
 
   static Future<List<dynamic>> fetchTrafficUpdates() async {
-    final response = await http.get(Uri.parse('$baseUrl/traffic-state'));
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/traffic-state'));
+      return json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception("Falha ao recuperar a tabela");
-    }
+    } catch(e) {
+      print("Exception deets: $e");
+      return [];
+    }  
   }
 }

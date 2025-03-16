@@ -61,18 +61,20 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: Row(
         children: [
+          Column(
+            children: [
+              Container(
+                width: 250,
+                color: Colors.green[100],
+              )
+            ],
+          ),
           Expanded(child: FlutterMapCustom()),
           Container(
             width: 250,
             color: Colors.green[100],
-            child: ListView.builder(
-              itemCount: trafficUpdates.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("${trafficUpdates[index]['traffic_light_id']}"),
-                  subtitle: Text("Lost time: ${trafficUpdates[index]['lost_time']}"),
-                );
-              },
+            child: Container(
+              child: null,
             ),
           ),
         ],
