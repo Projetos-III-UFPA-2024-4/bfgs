@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gui/wigets/flutter_map_custom.dart';
+import 'package:gui/widgets/flutter_map_custom.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gui/widgets/traffic_light_properties.dart';
 import './db_helper/api_service.dart';
 
 main() {
@@ -41,21 +42,36 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  List trafficUpdates = [];
+  List<dynamic> trafficUpdates = [];
+  bool isContainerVisible = false;
+  String selectedButton = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _loadTrafficUpdates();
+  Future<void> fetchData(String buttonLabel) async {
+    try {
+      List<dynamic> data = await ApiService.fetchTrafficUpdates();
+
+      setState(() {
+        selectedButton = buttonLabel;
+        trafficUpdates = data;
+        isContainerVisible = true;
+      });
+    } catch (e) {
+      setState(() {
+        trafficUpdates = ['Error $e'];
+        isContainerVisible = true;
+      });
+    }
   }
 
-  Future<void> _loadTrafficUpdates() async {
-    trafficUpdates = await ApiService.fetchTrafficUpdates();
+  void closeContainer() {
     setState(() {
-      
+      isContainerVisible = false;
+      selectedButton = '';
+      trafficUpdates = [];
     });
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,20 +79,12 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           Column(
             children: [
-              Container(
-                width: 250,
-                color: Colors.green[100],
-              )
+              Placeholder(),
             ],
           ),
-          Expanded(child: FlutterMapCustom()),
-          Container(
-            width: 250,
-            color: Colors.green[100],
-            child: Container(
-              child: null,
-            ),
-          ),
+          Expanded(child: FlutterMapCustom(onButtonPressed: fetchData,)),
+          if (isContainerVisible)
+          TrafficLightProperties(selectedButton: selectedButton, trafficData: trafficUpdates, onClose: closeContainer),
         ],
       ),
     );

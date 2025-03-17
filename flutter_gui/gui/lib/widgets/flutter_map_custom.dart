@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class FlutterMapCustom extends StatelessWidget {
-  FlutterMapCustom({super.key});
+  FlutterMapCustom({super.key, required this.onButtonPressed});
 
   final LatLng _initialCenter = LatLng(-1.412163, -48.442363);
+
+  final Function(String) onButtonPressed;
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +34,7 @@ class FlutterMapCustom extends StatelessWidget {
             // )
             Marker(
               child: ElevatedButton(
-                onPressed: () {
-                  
-                },
+                onPressed: () => onButtonPressed('LA'),
                 child: const Text('LA'),
               ),
               point: LatLng(-1.411914, -48.442602), //-1.412062/-48.442478
@@ -43,7 +44,7 @@ class FlutterMapCustom extends StatelessWidget {
             Marker(
               child: ElevatedButton(
                 onPressed: () {
-                  print('l2');
+                  onButtonPressed('LB');
                 },
                 child: const Text("LB"),
               ),
@@ -54,7 +55,7 @@ class FlutterMapCustom extends StatelessWidget {
             Marker(
               child: ElevatedButton(
                 onPressed: () {
-                  print('l3');
+                  onButtonPressed('LC');
                 },
                 child: const Text('LC'),
               ),
@@ -65,7 +66,7 @@ class FlutterMapCustom extends StatelessWidget {
             Marker(
               child: ElevatedButton(
                 onPressed: () {
-                  print('l4');
+                  onButtonPressed('LD');
                 },
                 child: const Text('LD'),
               ),
