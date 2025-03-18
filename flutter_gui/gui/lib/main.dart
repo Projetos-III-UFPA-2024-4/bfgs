@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gui/widgets/flutter_map_custom.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gui/widgets/hovering_container.dart';
 import 'package:gui/widgets/traffic_light_properties.dart';
 import './db_helper/api_service.dart';
 
 main() {
-  dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -30,10 +29,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  // todo: estados arquivados no db
-}
-
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -43,8 +38,11 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   List<dynamic> trafficUpdates = [];
-  bool isContainerVisible = false;
+  List<dynamic> trafficNotifications = [];
+  bool isTrafficPropsVisible = false;
   String selectedButton = '';
+  bool isNotificationsVisible = false;
+
 
   Future<void> fetchData(String buttonLabel) async {
     try {
@@ -53,38 +51,72 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         selectedButton = buttonLabel;
         trafficUpdates = data;
-        isContainerVisible = true;
+        isTrafficPropsVisible = true;
       });
     } catch (e) {
       setState(() {
-        trafficUpdates = ['Error $e'];
-        isContainerVisible = true;
+        trafficUpdates = ['Erro 01: $e'];
+        isTrafficPropsVisible = true;
       });
     }
   }
 
+  Future<void> fetchNotifications() async {
+    try {
+
+    final response = await ApiService.fetchNotifications();
+
+    setState(() {
+      trafficNotifications = response;
+      isNotificationsVisible = true;
+    });
+
+    } catch (e) {
+      setState(() {
+        trafficNotifications = ['Erro 02: $e'];
+        isNotificationsVisible = false;
+      });
+    }
+    
+
+  }
+
   void closeContainer() {
     setState(() {
-      isContainerVisible = false;
+      isTrafficPropsVisible = false;
       selectedButton = '';
       trafficUpdates = [];
     });
   }
 
-  
+  void closeNotifications() {
+    setState(() {
+      isNotificationsVisible = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          Column(
+      body: Stack(
+        children: [ 
+          Row(
             children: [
-              Placeholder(),
+              FlutterMapCustom(onButtonPressed: fetchData),
+              if (isTrafficPropsVisible)
+                TrafficLightProperties(
+                  selectedButton: selectedButton,
+                  trafficData: trafficUpdates,
+                  onClose: closeContainer,
+                ),
             ],
-          ),
-          Expanded(child: FlutterMapCustom(onButtonPressed: fetchData,)),
-          if (isContainerVisible)
-          TrafficLightProperties(selectedButton: selectedButton, trafficData: trafficUpdates, onClose: closeContainer),
+        ),
+        if (isNotificationsVisible)
+            HoveringContainer(
+              trafficData: trafficNotifications,
+              onClose: closeNotifications,
+            ),
+        FloatingActionButton(onPressed: fetchNotifications, child: Icon(Icons.notifications))
         ],
       ),
     );

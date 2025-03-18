@@ -37,14 +37,7 @@ class TrafficLightProperties extends StatelessWidget {
             ),
             Divider(),
             Expanded(
-              child: ListView.builder(
-                itemCount: trafficData.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(trafficData[index].toString()),
-                  );
-                },
-              ),
+              child: Placeholder(),
             ),
           ],
         ),

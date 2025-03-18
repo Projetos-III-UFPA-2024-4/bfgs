@@ -52,5 +52,11 @@ def add_user():
     db.commit()
     return jsonify({'message': 'User added successfully'}), 201
 
+@app.route('/notifications', methods=['GET'])
+def get_notifications():
+    cursor.execute("SELECT * FROM congestion_state.notifications")
+    notifications = cursor.fetchall()
+    return jsonify(notifications)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

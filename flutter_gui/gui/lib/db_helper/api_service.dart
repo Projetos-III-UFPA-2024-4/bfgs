@@ -10,8 +10,19 @@ class ApiService {
       return json.decode(response.body);
 
     } catch(e) {
-      print("Exception deets: $e");
+      print("Erro fetching traffic_updates: $e");
       return [];
-    }  
+    }
+  }
+
+  static Future<List<dynamic>> fetchNotifications() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/notifications'));
+
+      return json.decode(response.body);
+    } catch (e) {
+      print('Error fetching notifications: $e');
+      return [];
+    }
   }
 }
