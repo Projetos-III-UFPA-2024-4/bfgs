@@ -1,51 +1,132 @@
-# Step 1: Add modules to provide access to specific libraries and functions
-import json
-import os # Module provides functions to handle file paths, directories, environment variables
-import sys # Module provides access to Python-specific system parameters and functions
+import traci  # Importa a biblioteca TraCI para interagir com o SUMO
+import json  # Importa JSON para carregar configurações
+import traffic_utils  # Importa funções auxiliares do módulo traffic_utils
 
-# Step 2: Establish path to SUMO (SUMO_HOME)
-if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
-else:
-    sys.exit("Please declare environment variable 'SUMO_HOME'")
-    
+import mysql.connector  # Importa a biblioteca para conectar ao banco de dados MySQL
 
-# Step 3: Add Traci module to provide access to specific libraries and functions
-import traci # Static network information (such as reading and analyzing network files)
+# Carrega as configurações do SUMO a partir de um arquivo JSON
+with open("config_sumo.json", "r") as sumo_file:
+    config = json.load(sumo_file)
 
-# Step 4: Define Sumo configuration
-with open("config_sumo.json","r") as file:
-    config = json.load(file)
+# Carrega as configurações do banco de dados a partir de um arquivo JSON
+with open("config_db.json", "r") as db_file:
+    db_config = json.load(db_file)
 
+# Configuração dos parâmetros do SUMO
 Sumo_config = [
-    config["sumo_binary"],
-    '-c', config["config_file"],
-    '--step-length', config["step_length"],
-    '--delay', config["delay"],
-    '--lateral-resolution', config["delay"]
+    config["sumo_binary"],  # Caminho para o binário do SUMO
+    '-c', config["config_file"],  # Arquivo de configuração do SUMO
+    '--step-length', config["step_length"],  # Define o tempo de cada passo da simulação
+    '--delay', config["delay"],  # Define o atraso na execução
+    '--lateral-resolution', config["delay"]  # Define a resolução lateral
 ]
 
-# Step 5: Open connection between SUMO and Traci
-traci.start(Sumo_config)
+# Conecta ao banco de dados MySQL usando as credenciais carregadas
+cnx = mysql.connector.connect(
+    host=db_config["host"],
+    user=db_config["user"],
+    password=db_config["password"],
+    database=db_config["database"]
+)
 
-# Step 6: Define Variables
+cur = cnx.cursor()  # Cria um cursor para executar comandos SQL
 
-my_edge = 'Via3ToInter' #Aqui é onde mudados para qual via queremos analisar
+# Query para inserir dados na tabela de estado de congestionamento
+query = """
+    INSERT INTO my_db.congestion_state 
+    (cycle_number, num_phases, phase_index, edge_id, observed_flow, critical_flow, critical_flow_total) 
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+"""
 
-# Step 7: Define Functions
+# Início da execução principal do código
+if __name__ == "__main__":
+    traci.start(Sumo_config)  # Inicia a simulação do SUMO com os parâmetros configurados
 
-def getNumberOfCarsInEdges(edge): #Pega o número de carros em uma via
-    num_cars = 0
-    if edge in traci.edge.getIDList():
-        num_cars = traci.edge.getLastStepVehicleNumber(edge)
-        print(f"Número de carros na via {edge}: {num_cars}")
+    # Nome do semáforo a ser monitorado
+    myTl = "Tl1"
 
-# Step 8: Take simulation steps until there are no more vehicles in the network
-while traci.simulation.getMinExpectedNumber() > 0:
-    traci.simulationStep() # Move simulation forward 1 step
-    # Here you can decide what to do with simulation data at each s
-    # step_count = step_count + 1
+    # Verifica se o semáforo está na lista de IDs do SUMO
+    if myTl not in traci.trafficlight.getIDList():
+        print(f"Erro: Semáforo '{myTl}' não encontrado.")  # Mensagem de erro se não encontrado
+        traci.close()  # Fecha a conexão com o SUMO
+        cnx.close()  # Fecha a conexão com o banco de dados
+        exit()  # Encerra o programa
 
-# Step 9: Close connection between SUMO and Traci
-traci.close()
+    # Variáveis para controle do ciclo dos semáforos
+    cycle_number = 0  # Número do ciclo atual
+    current_phase_index = 0  # Índice da fase do semáforo
+    phase_start_time = traci.simulation.getTime()  # Obtém o tempo inicial da fase atual
+
+    # Obtém a lista de detectores de indução presentes no cenário do SUMO
+    detectors = traci.inductionloop.getIDList()
+
+    # Se nenhum detector for encontrado, exibe um aviso
+    if not detectors:
+        print("⚠️ Nenhum detector encontrado! Verifique sua configuração no SUMO.")
+
+    # Obtém as fases do semáforo e filtra apenas as fases verdes
+    phases = traci.trafficlight.getAllProgramLogics(myTl)[0].phases
+    green_phases = [i for i, phase in enumerate(phases) if "G" in phase.state]
+    numPhases = traffic_utils.get_green_phases(myTl)  # Obtém o número de fases verdes do semáforo
+    print(f"{numPhases}\n")  # Exibe o número de fases verdes
+
+    # Lista de edges associadas aos detectores
+    edges = []
+    for detector in detectors:
+        lane_id = traci.inductionloop.getLaneID(detector)  # Obtém a lane associada ao detector
+        edges.append(lane_id.split("_")[0])  # Extrai a edge da lane e adiciona à lista
+
+    # Inicializa um dicionário para armazenar a contagem de veículos por edge
+    detector_counts = {edg: 0 for edg in edges}
+
+    # Loop principal da simulação: continua enquanto houver veículos previstos na simulação
+    while traci.simulation.getMinExpectedNumber() > 0:
+        traci.simulationStep()  # Avança um passo na simulação
+        step = traci.simulation.getTime()  # Obtém o tempo atual da simulação
+
+        # Atualiza a contagem de veículos detectados
+        update = traffic_utils.update_detector_counts(detectors)
+
+        # Obtém a fase atual do semáforo
+        current_phase = traci.trafficlight.getPhase(myTl)
+
+        # Se a fase atual for uma fase verde
+        if current_phase in green_phases:
+            phase_duration = phases[current_phase].duration  # Obtém a duração da fase atual
+
+            # Atualiza os detectores com base na fase atual
+            update = traffic_utils.update_detector_counts(detectors, detector_counts)
+
+            # Se a duração da fase verde terminou
+            if step >= phase_start_time + phase_duration:
+                print(f"\n🚦 Fim do Verde da Fase {current_phase} no Ciclo {cycle_number}")                    
+
+                # Calcula os fluxos críticos baseados na contagem de veículos
+                critical_flows = traffic_utils.calculate_critical_flow(detector_counts)
+                critical_flow_total = sum(critical_flows.values())  # Soma dos fluxos críticos
+
+                # Para cada edge, obtém os fluxos críticos e observados
+                for edge, flow in critical_flows.items():
+                    observed_flow = detector_counts.get(edge, 0)  # Obtém o fluxo observado
+
+                    # Exibe os dados coletados
+                    print(f"  - {edge}: Fluxo crítico = {flow:.4f} | Carros observados = {observed_flow}")
+
+                    # Insere os dados no banco de dados
+                    cur.execute(query, (cycle_number, numPhases, current_phase, edge, observed_flow, flow, critical_flow_total))
+
+                cnx.commit()  # Confirma a transação no banco de dados
+
+                # Resetar a contagem dos detectores para a próxima fase
+                detector_counts = {edg: 0 for edg in edges}
+
+                # Avançar para a próxima fase de verde
+                current_phase_index = (current_phase_index + 1) % numPhases
+                phase_start_time = step  # Atualiza o tempo de início da nova fase verde
+
+                # Se todas as fases passaram, avança um ciclo
+                if current_phase_index == 0:
+                    cycle_number += 1
+        
+    traci.close()  # Finaliza a conexão com o SUMO
+    cnx.close()  # Finaliza a conexão com o banco de dados
