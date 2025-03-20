@@ -1,4 +1,6 @@
 import traci  # Importa a biblioteca TraCI para interagir com o SUMO
+import json  # Importa JSON para carregar configurações
+import mysql.connector  # Importa a biblioteca para conectar ao banco de dados MySQL
 
 def get_useful_edges():
     """

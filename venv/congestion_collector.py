@@ -4,42 +4,43 @@ import traffic_utils  # Importa funções auxiliares do módulo traffic_utils
 
 import mysql.connector  # Importa a biblioteca para conectar ao banco de dados MySQL
 
-# Carrega as configurações do SUMO a partir de um arquivo JSON
-with open("config_sumo.json", "r") as sumo_file:
-    config = json.load(sumo_file)
+def run():
+    # Carrega as configurações do SUMO a partir de um arquivo JSON
+    with open("config_sumo.json", "r") as sumo_file:
+        config = json.load(sumo_file)
 
-# Carrega as configurações do banco de dados a partir de um arquivo JSON
-with open("config_db.json", "r") as db_file:
-    db_config = json.load(db_file)
+    # Carrega as configurações do banco de dados a partir de um arquivo JSON
+    with open("config_db.json", "r") as db_file:
+        db_config = json.load(db_file)
 
-# Configuração dos parâmetros do SUMO
-Sumo_config = [
-    config["sumo_binary"],  # Caminho para o binário do SUMO
-    '-c', config["config_file"],  # Arquivo de configuração do SUMO
-    '--step-length', config["step_length"],  # Define o tempo de cada passo da simulação
-    '--delay', config["delay"],  # Define o atraso na execução
-    '--lateral-resolution', config["delay"]  # Define a resolução lateral
-]
+    # Configuração dos parâmetros do SUMO
+    Sumo_config = [
+        config["sumo_binary"],  # Caminho para o binário do SUMO
+        '-c', config["config_file"],  # Arquivo de configuração do SUMO
+        '--step-length', config["step_length"],  # Define o tempo de cada passo da simulação
+        '--delay', config["delay"],  # Define o atraso na execução
+        '--lateral-resolution', config["delay"]  # Define a resolução lateral
+    ]
 
-# Conecta ao banco de dados MySQL usando as credenciais carregadas
-cnx = mysql.connector.connect(
-    host=db_config["host"],
-    user=db_config["user"],
-    password=db_config["password"],
-    database=db_config["database"]
-)
+    # Conecta ao banco de dados MySQL usando as credenciais carregadas
+    cnx = mysql.connector.connect(
+        host=db_config["host"],
+        user=db_config["user"],
+        password=db_config["password"],
+        database=db_config["database"]
+    )
 
-cur = cnx.cursor()  # Cria um cursor para executar comandos SQL
+    cur = cnx.cursor()  # Cria um cursor para executar comandos SQL
 
-# Query para inserir dados na tabela de estado de congestionamento
-query = """
-    INSERT INTO my_db.congestion_state 
-    (cycle_number, num_phases, phase_index, edge_id, observed_flow, critical_flow, critical_flow_total) 
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-"""
+    # Query para inserir dados na tabela de estado de congestionamento
+    query = """
+        INSERT INTO my_db.congestion_state 
+        (cycle_number, num_phases, phase_index, edge_id, observed_flow, critical_flow, critical_flow_total) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
 
-# Início da execução principal do código
-if __name__ == "__main__":
+    # Início da execução principal do código
+    
     traci.start(Sumo_config)  # Inicia a simulação do SUMO com os parâmetros configurados
 
     # Nome do semáforo a ser monitorado
@@ -127,6 +128,9 @@ if __name__ == "__main__":
                 # Se todas as fases passaram, avança um ciclo
                 if current_phase_index == 0:
                     cycle_number += 1
-        
+            
     traci.close()  # Finaliza a conexão com o SUMO
     cnx.close()  # Finaliza a conexão com o banco de dados
+
+if __name__ == "__main__":
+    run()
