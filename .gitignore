@@ -1,3 +1,3 @@
-.json
-__pycache__
-.vscode
+venv/config_db.json
+venv/__pycache__/
+.vscode/
