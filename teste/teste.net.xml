@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-03-18 01:11:46 by Eclipse SUMO netedit Version 1.22.0
+<neteditConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/neteditConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="C:\Users\Administrator\Documents\BFGS\bfgs\teste\teste.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="C:\Users\Administrator\Documents\BFGS\bfgs\teste\teste.net.xml"/>
+    </output>
+
+    <processing>
+        <offset.disable-normalization value="true"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+    </junctions>
+
+    <netedit>
+        <new-network value="false"/>
+    </netedit>
+
+</neteditConfiguration>
+-->
+
+<net version="1.20" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="-71.46,-6.60,9.04,24.67" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
+
+    <edge id=":J3_0" function="internal">
+        <lane id=":J3_0_0" index="0" speed="13.89" length="10.72" shape="-34.26,-9.75 -23.58,-10.07"/>
+        <lane id=":J3_0_1" index="1" speed="13.89" length="10.72" shape="-34.20,-6.55 -23.45,-6.87"/>
+    </edge>
+    <edge id=":J3_2" function="internal">
+        <lane id=":J3_2_0" index="0" speed="6.55" length="8.80" shape="-28.82,-1.21 -28.46,-3.61 -27.45,-5.35 -25.77,-6.44 -23.45,-6.87"/>
+    </edge>
+
+    <edge id="E1" from="J2" to="J3" priority="-1">
+        <lane id="E1_0" index="0" speed="13.89" length="37.30" shape="-71.56,-9.02 -34.26,-9.75"/>
+        <lane id="E1_1" index="1" speed="13.89" length="37.30" shape="-71.49,-5.82 -34.20,-6.55"/>
+    </edge>
+    <edge id="E2" from="J3" to="J4" priority="-1">
+        <lane id="E2_0" index="0" speed="13.89" length="32.45" shape="-23.58,-10.07 8.84,-11.40"/>
+        <lane id="E2_1" index="1" speed="13.89" length="32.45" shape="-23.45,-6.87 8.97,-8.20"/>
+    </edge>
+    <edge id="E3" from="J6" to="J3" priority="-1" spreadType="center">
+        <lane id="E3_0" index="0" speed="13.89" length="25.88" shape="-29.13,24.67 -28.82,-1.21"/>
+    </edge>
+
+    <tlLogic id="J3" type="static" programID="0" offset="0">
+        <phase duration="20" state="GGr"/>
+        <phase duration="3"  state="yyr"/>
+        <phase duration="42" state="rrG"/>
+        <phase duration="3"  state="rry"/>
+    </tlLogic>
+
+    <junction id="J2" type="dead_end" x="-71.46" y="-4.22" incLanes="" intLanes="" shape="-71.46,-4.22 -71.59,-10.62"/>
+    <junction id="J3" type="traffic_light" x="-28.78" y="-5.05" incLanes="E1_0 E1_1 E3_0" intLanes=":J3_0_0 :J3_0_1 :J3_2_0" shape="-23.38,-5.27 -23.64,-11.67 -34.29,-11.35 -34.17,-4.95 -32.07,-4.57 -31.34,-4.06 -30.82,-3.33 -30.51,-2.39 -30.42,-1.23 -27.22,-1.19 -26.77,-3.39 -26.24,-4.18 -25.49,-4.75 -24.54,-5.12">
+        <request index="0" response="000" foes="100" cont="0"/>
+        <request index="1" response="000" foes="100" cont="0"/>
+        <request index="2" response="011" foes="011" cont="0"/>
+    </junction>
+    <junction id="J4" type="dead_end" x="9.04" y="-6.60" incLanes="E2_0 E2_1" intLanes="" shape="8.78,-12.99 9.04,-6.60"/>
+    <junction id="J6" type="dead_end" x="-29.13" y="24.67" incLanes="" intLanes="" shape="-27.53,24.69 -30.73,24.65"/>
+
+    <connection from="E1" to="E2" fromLane="0" toLane="0" via=":J3_0_0" tl="J3" linkIndex="0" dir="s" state="O"/>
+    <connection from="E1" to="E2" fromLane="1" toLane="1" via=":J3_0_1" tl="J3" linkIndex="1" dir="s" state="O"/>
+    <connection from="E3" to="E2" fromLane="0" toLane="1" via=":J3_2_0" tl="J3" linkIndex="2" dir="l" state="o"/>
+
+    <connection from=":J3_0" to="E2" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":J3_0" to="E2" fromLane="1" toLane="1" dir="s" state="M"/>
+    <connection from=":J3_2" to="E2" fromLane="0" toLane="1" dir="l" state="M"/>
+
+</net>
