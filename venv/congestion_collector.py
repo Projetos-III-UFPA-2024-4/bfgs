@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     # Se nenhum detector for encontrado, exibe um aviso
     if not detectors:
-        print("⚠️ Nenhum detector encontrado! Verifique sua configuração no SUMO.")
+        print("Nenhum detector encontrado! Verifique sua configuração no SUMO.")
 
     # Obtém as fases do semáforo e filtra apenas as fases verdes
     phases = traci.trafficlight.getAllProgramLogics(myTl)[0].phases
