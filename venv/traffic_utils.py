@@ -78,3 +78,45 @@ def calculate_critical_flow(detector_counts, S_i=1800,):
             critical_flows[approach] = max(critical_flows[approach], count / S_i)  # Mantém o maior valor do fluxo crítico
 
     return critical_flows  # Retorna o dicionário contendo os fluxos críticos calculados para cada edge
+
+def update_green_phases_manually(traffic_light_id, green_durations, lost_time = 2):
+    """
+    Atualiza as fases de um semáforo, mantendo os mesmos estados,
+    definindo durações personalizadas apenas para fases com luz verde,
+    e fixando as demais (ex: amarelas) com 2 segundos.
+
+    Parâmetros:
+    - traffic_light_id (str): ID do semáforo no SUMO
+    - duracoes_verde (list[int]): Lista de durações desejadas para as fases com 'G'
+    """
+
+    old_programs = traci.trafficlight.getAllProgramLogics(traffic_light_id)
+
+    if len(old_programs) == 0:
+        print(f"⚠️ Nenhum programa encontrado para o semáforo '{traffic_light_id}'")
+        return
+
+    old_logic = old_programs[0]
+    old_phases_raw = old_logic.phases
+
+    novas_fases = []
+    index_verde = 0
+
+    for phase in old_phases_raw:
+        if 'G' in phase.state:  # fase com verde
+            duracao = green_durations[index_verde] if index_verde < len(green_durations) else phase.duration
+            index_verde += 1
+        else:  # fase de transição (amarelo ou vermelho total)
+            duracao = lost_time
+
+        novas_fases.append(traci.trafficlight.Phase(duracao, phase.state))
+
+    nova_logica = traci.trafficlight.Logic(
+        programID=old_logic.programID,
+        type=old_logic.type,
+        currentPhaseIndex=0,
+        phases=novas_fases
+    )
+
+    traci.trafficlight.setProgramLogic(traffic_light_id, nova_logica)
+    print(f"Fases do semáforo '{traffic_light_id}' atualizadas com sucesso.")
