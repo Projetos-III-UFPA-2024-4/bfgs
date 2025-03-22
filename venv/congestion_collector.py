@@ -1,8 +1,9 @@
 import traci  # Importa a biblioteca TraCI para interagir com o SUMO
 import json  # Importa JSON para carregar configurações
-import traffic_utils  # Importa funções auxiliares do módulo traffic_utils
+import traffic_utils
 
 import mysql.connector  # Importa a biblioteca para conectar ao banco de dados MySQL
+
 
 def run():
     # Carrega as configurações do SUMO a partir de um arquivo JSON
@@ -19,7 +20,7 @@ def run():
         '-c', config["config_file"],  # Arquivo de configuração do SUMO
         '--step-length', config["step_length"],  # Define o tempo de cada passo da simulação
         '--delay', config["delay"],  # Define o atraso na execução
-        '--lateral-resolution', config["delay"]  # Define a resolução lateral
+        '--lateral-resolution', config["lateral_resolution"]  # Define a resolução lateral
     ]
 
     # Conecta ao banco de dados MySQL usando as credenciais carregadas
@@ -71,22 +72,12 @@ def run():
     numPhases = traffic_utils.get_green_phases(myTl)  # Obtém o número de fases verdes do semáforo
     print(f"{numPhases}\n")  # Exibe o número de fases verdes
 
-    # Lista de edges associadas aos detectores
-    edges = []
-    for detector in detectors:
-        lane_id = traci.inductionloop.getLaneID(detector)  # Obtém a lane associada ao detector
-        edges.append(lane_id.split("_")[0])  # Extrai a edge da lane e adiciona à lista
-
-    # Inicializa um dicionário para armazenar a contagem de veículos por edge
-    detector_counts = {edg: 0 for edg in edges}
-
+    observed_flow = 0
+    phase_data = []
     # Loop principal da simulação: continua enquanto houver veículos previstos na simulação
     while traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()  # Avança um passo na simulação
         step = traci.simulation.getTime()  # Obtém o tempo atual da simulação
-
-        # Atualiza a contagem de veículos detectados
-        update = traffic_utils.update_detector_counts(detectors)
 
         # Obtém a fase atual do semáforo
         current_phase = traci.trafficlight.getPhase(myTl)
@@ -96,38 +87,52 @@ def run():
             phase_duration = phases[current_phase].duration  # Obtém a duração da fase atual
 
             # Atualiza os detectores com base na fase atual
-            update = traffic_utils.update_detector_counts(detectors, detector_counts)
+            observed_flow = traffic_utils.update_detector_counts(detectors,observed_flow)
 
             # Se a duração da fase verde terminou
-            if step >= phase_start_time + phase_duration:
-                print(f"\n🚦 Fim do Verde da Fase {current_phase} no Ciclo {cycle_number}")                    
+            if step >= phase_start_time + phase_duration:                 
 
                 # Calcula os fluxos críticos baseados na contagem de veículos
-                critical_flows = traffic_utils.calculate_critical_flow(detector_counts)
-                critical_flow_total = sum(critical_flows.values())  # Soma dos fluxos críticos
+                flow = traffic_utils.calculate_critical_flow(observed_flow)
 
-                # Para cada edge, obtém os fluxos críticos e observados
-                for edge, flow in critical_flows.items():
-                    observed_flow = detector_counts.get(edge, 0)  # Obtém o fluxo observado
+                print(f"\n Fim da Fase {current_phase} no Ciclo {cycle_number}")
+                print(f"Fluxo crítico desta fase = {flow:.4f} | Carros observados = {observed_flow}")
 
-                    # Exibe os dados coletados
-                    print(f"  - {edge}: Fluxo crítico = {flow:.4f} | Carros observados = {observed_flow}")
-
-                    # Insere os dados no banco de dados
-                    cur.execute(query, (cycle_number, numPhases, current_phase, edge, observed_flow, flow, critical_flow_total))
-
-                cnx.commit()  # Confirma a transação no banco de dados
-
-                # Resetar a contagem dos detectores para a próxima fase
-                detector_counts = {edg: 0 for edg in edges}
+                phase_data.append({
+                    "cycle": cycle_number,
+                    "phase": current_phase,
+                    "observed_flow": observed_flow,
+                    "critical_flow": flow
+                })
 
                 # Avançar para a próxima fase de verde
                 current_phase_index = (current_phase_index + 1) % numPhases
                 phase_start_time = step  # Atualiza o tempo de início da nova fase verde
+                observed_flow = 0
 
-                # Se todas as fases passaram, avança um ciclo
                 if current_phase_index == 0:
+                    critical_flow_total = sum(p["critical_flow"] for p in phase_data)
+        
+                    print(f"Fluxo crítico total = {critical_flow_total:.4f} \n✅ Fim do Ciclo {cycle_number}\n")
+
+
+                    # Insere os dados no banco de dados
+                    for data in phase_data:
+                        cur.execute(query, (
+                            data["cycle"],
+                            numPhases,
+                            data["phase"],
+                            None,
+                            data["observed_flow"],
+                            data["critical_flow"],
+                            critical_flow_total
+                        ))
+                    
+                    cnx.commit()  # Confirma a transação no banco de dados
+
+                    phase_data = []
                     cycle_number += 1
+
             
     traci.close()  # Finaliza a conexão com o SUMO
     cnx.close()  # Finaliza a conexão com o banco de dados
