@@ -35,11 +35,10 @@ class HoveringContainer extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Header with Close Button
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green[200],
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 ),
                 child: Row(
@@ -61,7 +60,6 @@ class HoveringContainer extends StatelessWidget {
                 ),
               ),
 
-              // Notification List
               Expanded(
                 child:
                     trafficData.isEmpty
@@ -71,13 +69,11 @@ class HoveringContainer extends StatelessWidget {
                           itemCount: trafficData.length,
                           itemBuilder: (context, index) {
                             var item = trafficData[index];
-                            String message = item['message'] ?? 'Unknown event';
-                            String category = item['category'] ?? 'info';
-                            String timestamp = item['timestamp'] ?? 'No time';
+                            String message = item['Message'] ?? 'Unknown event';
+                            String timestamp = item['Timestamp'] ?? 'No time';
 
                             return NotificationCard(
                               message: message,
-                              category: category,
                               timestamp: timestamp,
                             );
                           },
@@ -94,25 +90,21 @@ class HoveringContainer extends StatelessWidget {
 // Notification Card Widget
 class NotificationCard extends StatelessWidget {
   final String message;
-  final String category;
   final String timestamp;
 
   const NotificationCard({
     super.key,
     required this.message,
-    required this.category,
     required this.timestamp,
   });
 
   IconData _getIcon() {
-    switch (category) {
-      case 'alert':
+    switch (message) {
+      case 'Pouco Congestionado':
         return Icons.warning_amber_rounded;
-      case 'info':
-        return Icons.info;
-      case 'success':
+      case 'Normal':
         return Icons.check_circle;
-      case 'error':
+      case 'Muito Congestionado':
         return Icons.error;
       default:
         return Icons.notifications;
@@ -120,14 +112,12 @@ class NotificationCard extends StatelessWidget {
   }
 
   Color _getColor() {
-    switch (category) {
-      case 'alert':
+    switch (message) {
+      case 'Pouco Congestionado':
         return Colors.orange;
-      case 'info':
-        return Colors.blue;
-      case 'success':
+      case 'Normal':
         return Colors.green;
-      case 'error':
+      case 'Muito Congestionado':
         return Colors.red;
       default:
         return Colors.grey;
@@ -147,3 +137,4 @@ class NotificationCard extends StatelessWidget {
     );
   }
 }
+

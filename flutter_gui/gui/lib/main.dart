@@ -77,8 +77,6 @@ class _MapScreenState extends State<MapScreen> {
         isNotificationsVisible = false;
       });
     }
-    
-
   }
 
   void closeContainer() {
@@ -102,7 +100,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [ 
           Row(
             children: [
-              FlutterMapCustom(onButtonPressed: fetchData),
+              FlutterMapCustom(onButtonPressed: fetchData, trafficData: trafficUpdates,),
               if (isTrafficPropsVisible)
                 TrafficLightProperties(
                   selectedButton: selectedButton,

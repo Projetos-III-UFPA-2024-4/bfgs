@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class FlutterMapCustom extends StatelessWidget {
-  FlutterMapCustom({super.key, required this.onButtonPressed});
+  FlutterMapCustom({super.key, required this.onButtonPressed, required this.trafficData});
 
   final LatLng _initialCenter = LatLng(-1.412163, -48.442363);
 
   final Function(String) onButtonPressed;
+  final List<dynamic> trafficData;
 
+
+  void selectColor() {
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +27,7 @@ class FlutterMapCustom extends StatelessWidget {
             userAgentPackageName: 'com.example.app',
           ),
           MarkerLayer(
-            markers: [
-              //Marker(
-              //  child: ElevatedButton(
-              //    onPressed: () {
-              //      print('l1');
-              //    },
-              //    child: null,
-              //  ),
-              //  point: LatLng(-1.412062, -48.442478), //-1.412062/-48.442478
-              //  width: 80,
-              // height: 80,
-              // )
+            markers: [      
               Marker(
                 child: ElevatedButton(
                   onPressed: () => onButtonPressed('LA'),
