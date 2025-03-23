@@ -38,6 +38,10 @@ def get_traffic_state():
     traffic_state = cursor.fetchall()
     return jsonify(traffic_state)
 
+#endpoint para modificar simulação
+#@app.route('/send-data', methods=['POST'])
+#def send_data():
+
 # Endpoint para adicionar um usuário
 @app.route('/users', methods=['POST'])
 def add_user():
