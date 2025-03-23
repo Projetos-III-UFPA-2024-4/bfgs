@@ -28,11 +28,11 @@ def main():
     print(cursor_selector.rowcount, "record selected.")
     row_data_raw = cursor_selector.fetchall()
     print(row_data_raw)
-    n_phases = int(row_data_raw[0][6])
+    n_phases = int(row_data_raw[0][4])
     print(f'numero de fases {n_phases}')
     row_data = []
     for i in range(n_phases):
-        row_data.append({ "phase_number": row_data_raw[i][2], "green_time": row_data_raw[i][4], "cycle": row_data_raw[i][3]})
+        row_data.append({ "phase_number": row_data_raw[i][1], "green_time": row_data_raw[i][3], "cycle": row_data_raw[i][2]})
 
     for i in range(len(row_data)):
         print(row_data[i])
@@ -43,3 +43,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

@@ -81,7 +81,7 @@ def db_clean(cursor, db, table : str):
 
 
 def db_update(sinal: Trffclght, cursor, db, table: str):
-    sql = f"INSERT INTO {table} (id, phase_id, cycle_time, green_time, light_state) VALUES (%s, %s, %s, %s, %s)"
+    sql = f"INSERT INTO {table} (id, phase_id, cycle_time, green_time, Num_phases) VALUES (%s, %s, %s, %s, %s)"
     val = []
     for i in range(len(sinal.phases)):
         val.append(tuple((
