@@ -1,9 +1,7 @@
 import time
 import traci
-import json
 import mysql.connector as mc
 
-file = "a"
 database_auto = "traffic_updates"
 database_man = "traffic_updates_manual"
 
@@ -83,21 +81,29 @@ def controller_flow(database, counter):
 
     sql = f"SELECT mode FROM {database}"
     cursor_selector.execute(sql)
-    if (cursor_selector.fetchone()[0] == 1):
+    mode = cursor_selector.fetchone()[0]
+    print(f"mode {mode}")
+
+    if (mode == 1):
         database = database_man
-    if (cursor_selector.fetchone()[0] == 0):
+
+        while(True):
+            sql = f"SELECT mode FROM {database}"
+            cursor_selector.execute(sql)
+            if cursor_selector.fetchone() is None: break
+            print("waiting for the prompt...")
+            time.sleep(2)
+
+    else:#(mode == 0)
         database = database_auto
-    time.sleep(2)
 
     sql = f"SELECT * FROM {database}"
     cursor_selector.execute(sql)
     print(cursor_selector.rowcount, "record selected.")
 
     row_data_raw = cursor_selector.fetchall()
-    print(row_data_raw)
 
     n_phases = int(row_data_raw[0][4])
-    print(f'numero de fases {n_phases}')
     greens = []
     cycle_time = row_data_raw[0][2]
     for i in range(n_phases):

@@ -101,7 +101,7 @@ def main():
     observed_flow = []
     phases = []
     sf = [] #1800 default
-    counter = 0
+    #counter = 0
 
     while(True):
         #initial setup
@@ -115,7 +115,7 @@ def main():
         cursor_selector.execute("SELECT Cycle_Number FROM congestion_data")
         cycle_number = cursor_selector.fetchone()[0]
 
-        if(counter == 10 ):
+        '''if(counter == 10 ):
             a = input("keep going?\n")
             counter = 0
             if (a == "n"):
@@ -123,7 +123,7 @@ def main():
                 db_gt.close()
                 exit()
 
-        counter += 1
+        counter += 1'''
 
         if(cycle_number == cycle_reference and cycle_number != 0):
             print("nothing to be done")
