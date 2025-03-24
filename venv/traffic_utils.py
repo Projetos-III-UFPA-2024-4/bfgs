@@ -45,7 +45,7 @@ def get_green_phases(tls_id):
     Returns:
         int: Número de fases verdes no ciclo do semáforo (total de fases dividido por 2).
     """
-    temp = traci.trafficlight.getCompleteRedYellowGreenDefinition(tls_id)
+    temp = traci.trafficlight.getAllProgramLogics(tls_id)
     temp = temp[0].phases
     num_phases = int(len(temp) / 2)
     return num_phases

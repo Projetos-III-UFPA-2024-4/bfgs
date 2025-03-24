@@ -3,7 +3,6 @@ import json
 import mysql.connector
 from TrafficCollector import TrafficCollector
 from Controller import controller_flow
-import time
 
 def main():
     # === Carrega configurações ===
@@ -45,7 +44,7 @@ def main():
         collector.collect(cur, cnx, db_config, step)
 
         # Executa o controle
-        controller_flow(cur, db_config)
+        #controller_flow(cur, db_config)
     
     # === Encerra a simulação e o banco ===
     traci.close()
