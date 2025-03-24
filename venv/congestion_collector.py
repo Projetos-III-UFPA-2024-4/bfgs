@@ -4,7 +4,6 @@ import traffic_utils
 
 import mysql.connector  # Importa a biblioteca para conectar ao banco de dados MySQL
 
-
 def run():
     # Carrega as configurações do SUMO a partir de um arquivo JSON
     with open("config_sumo.json", "r") as sumo_file:
@@ -31,17 +30,34 @@ def run():
         database=db_config["database"]
     )
 
+    database=db_config["database"]
+    table_congestion_data = db_config["table_congestion_data"]
+    table_notifications = db_config["table_notification"]
+    table_states = db_config["table_states"]
+
     cur = cnx.cursor()  # Cria um cursor para executar comandos SQL
 
     # Query para inserir dados na tabela de estado de congestionamento
-    query = """
-        INSERT INTO my_db.congestion_state 
-        (cycle_number, num_phases, phase_index, edge_id, observed_flow, critical_flow, critical_flow_total) 
+
+    query_congestionData_replace = f"""
+        REPLACE INTO {database}.{table_congestion_data}
+        (ID, Cycle_Number, Num_Phases, Phase_Index, Observed_Flow, Critical_Flow, Critical_Flow_TOTAL)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
 
+    query_notification_replace = f"""
+        REPLACE INTO {database}.{table_notifications}
+        (ID, Message)
+        VALUES (%s, %s)
+    """
+
+    query_states_replace = f"""
+        REPLACE INTO {database}.{table_states}
+        (ID, States)
+        VALUES (%s, %s)
+    """
     # Início da execução principal do código
-    
+
     traci.start(Sumo_config)  # Inicia a simulação do SUMO com os parâmetros configurados
 
     # Nome do semáforo a ser monitorado
@@ -55,6 +71,7 @@ def run():
         exit()  # Encerra o programa
 
     # Variáveis para controle do ciclo dos semáforos
+    last_phase = 0
     cycle_number = 0  # Número do ciclo atual
     current_phase_index = 0  # Índice da fase do semáforo
     phase_start_time = traci.simulation.getTime()  # Obtém o tempo inicial da fase atual
@@ -82,6 +99,14 @@ def run():
         # Obtém a fase atual do semáforo
         current_phase = traci.trafficlight.getPhase(myTl)
 
+        if current_phase != last_phase:
+            previous_state = traffic_utils.get_tls_states(myTl)
+            cur.execute(query_states_replace, (1, previous_state))
+            cnx.commit()              
+
+            last_phase = current_phase
+            print("Estados inseridos\n")
+
         # Se a fase atual for uma fase verde
         if current_phase in green_phases:
             phase_duration = phases[current_phase].duration  # Obtém a duração da fase atual
@@ -98,6 +123,8 @@ def run():
                 print(f"\n Fim da Fase {current_phase} no Ciclo {cycle_number}")
                 print(f"Fluxo crítico desta fase = {flow:.4f} | Carros observados = {observed_flow}")
 
+                state = traffic_utils.get_tls_states(myTl)
+
                 phase_data.append({
                     "cycle": cycle_number,
                     "phase": current_phase,
@@ -112,28 +139,30 @@ def run():
 
                 if current_phase_index == 0:
                     critical_flow_total = sum(p["critical_flow"] for p in phase_data)
-        
-                    print(f"Fluxo crítico total = {critical_flow_total:.4f} \n✅ Fim do Ciclo {cycle_number}\n")
+                    print(f"Fluxo crítico total = {critical_flow_total:.4f} \nFim do Ciclo {cycle_number}\n")
+                    massage = (traffic_utils.notification_agent(critical_flow_total),)
+                    
 
-
-                    # Insere os dados no banco de dados
-                    for data in phase_data:
-                        cur.execute(query, (
+                    # Substitui os dados no banco de dados
+                    i = 0
+                    for i, data in enumerate(phase_data):
+                        cur.execute(query_congestionData_replace, (
+                            i + 1,
                             data["cycle"],
                             numPhases,
                             data["phase"],
-                            None,
                             data["observed_flow"],
                             data["critical_flow"],
                             critical_flow_total
                         ))
-                    
+
+                    cur.execute(query_notification_replace, (1, massage[0]))                           
                     cnx.commit()  # Confirma a transação no banco de dados
+                    print("DADOS INSERIDOS\n")
 
                     phase_data = []
                     cycle_number += 1
 
-            
     traci.close()  # Finaliza a conexão com o SUMO
     cnx.close()  # Finaliza a conexão com o banco de dados
 

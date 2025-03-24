@@ -94,3 +94,20 @@ def update_green_phases_manually(traffic_light_id, green_durations, lost_time=2)
 
     traci.trafficlight.setProgramLogic(traffic_light_id, nova_logica)
     print(f"Fases do semáforo '{traffic_light_id}' atualizadas com sucesso.")
+
+def notification_agent(critical_flow_total):
+    messages = {
+        0.25: 'Sem Engarrafamento',
+        0.5: 'Normal',
+        0.75: 'Congestionado',
+        float('inf'): 'Muito Congestionado'
+    }
+    for limit, message in messages.items():
+        if critical_flow_total <= limit:
+            return message
+    
+def get_tls_states(tlsID):
+    current_phase_index = traci.trafficlight.getPhase(tlsID)
+    program = traci.trafficlight.getAllProgramLogics(tlsID)[0]
+    current_state = program.phases[current_phase_index].state
+    return current_state
