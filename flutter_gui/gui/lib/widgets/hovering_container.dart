@@ -45,7 +45,7 @@ class HoveringContainer extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Traffic Alerts",
+                      "Alertas de Tráfego",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

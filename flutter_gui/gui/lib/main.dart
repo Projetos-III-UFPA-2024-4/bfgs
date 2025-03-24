@@ -114,7 +114,8 @@ class _MapScreenState extends State<MapScreen> {
               trafficData: trafficNotifications,
               onClose: closeNotifications,
             ),
-        FloatingActionButton(onPressed: fetchNotifications, child: Icon(Icons.notifications))
+        FloatingActionButton(onPressed: fetchNotifications, splashColor: const Color.fromARGB(255, 205, 245, 206), backgroundColor: Colors.green[100], child: Icon(Icons.notifications, color: Colors.green,), ),
+        
         ],
       ),
     );

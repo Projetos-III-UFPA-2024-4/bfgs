@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 class TrafficLightProperties extends StatelessWidget {
   final String selectedButton;
   final List<dynamic> trafficData;
@@ -81,6 +83,7 @@ class TrafficLightProperties extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+        
                 Text(
                   'Comandos',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -134,19 +137,7 @@ class SendData extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'fase',
-            ),
-          ),
-          SizedBox(height: 15),
-          TextFormField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'tempo',
-            ),
-          ),
+          MyCustomForm(),
         ],
       ),
     );
@@ -170,6 +161,91 @@ class MyCustomFormState extends State<MyCustomForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  final _phaseController = TextEditingController();
+  final _cycleTimeController = TextEditingController();
+  final _greenTimeController = TextEditingController();
+  final _numPhasesController = TextEditingController();
+  String result = '';
+  int modeState = 0;
+  bool isFormEnabled = false;
+
+
+  @override
+  void dispose() {
+    _phaseController.dispose();
+    _cycleTimeController.dispose();
+    _greenTimeController.dispose();
+    _numPhasesController.dispose();
+    super.dispose();
+  }
+
+
+  Future<void> _formSubmit()  async {
+    final String apiUrl = 'http://localhost:5000/traffic-change';
+
+    if(_formKey.currentState!.validate()) {
+      try {
+
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json;charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'phase_id': _phaseController.text,
+            'cycle_time': _cycleTimeController.text,
+            'green_time': _greenTimeController.text,
+            'Num_Phase': _numPhasesController.text,
+          }),
+        );
+        
+        if (response.statusCode != 201) {
+          throw Exception('Failed to post data');
+        }
+
+      } catch (e) {
+        setState(() {
+          result = 'Error writing to simulation: $e';
+        });
+      }
+    }
+  }
+
+
+  void _changeMode() async {
+    final String apiUrl = 'http://localhost:5000/change-mode';
+
+    if (modeState == 0) {
+      setState(() {
+        modeState = 1;
+      });
+    } else {
+      setState(() {
+        modeState = 0;
+      });
+    }
+
+    try {
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json;charset=UTF-8',
+          },
+          body: jsonEncode(<String, int>{
+            'mode': 1,
+          }),
+        );
+        
+        if (response.statusCode != 201) {
+          throw Exception('Failed to change mode');
+        }
+
+      } catch (e) {
+        setState(() {
+          modeState = -1;
+        });
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,12 +254,49 @@ class MyCustomFormState extends State<MyCustomForm> {
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          ElevatedButton(onPressed: _changeMode, child: Text('Trocar Modo', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
           TextFormField(
-            // The validator receives the text that the user has entered.
+            controller: _phaseController,
+            decoration: InputDecoration(labelText: 'Fase'),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter some text';
+                return 'Insira a fase';
+              }
+              return null;
+            },
+            
+          ),
+
+          TextFormField(
+            controller: _cycleTimeController,
+            decoration: InputDecoration(labelText: 'Ciclo'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um ciclo';
+              }
+              return null;
+            },
+          ),
+
+           TextFormField(
+            controller: _greenTimeController,
+            decoration: InputDecoration(labelText: 'Tempo de Verde'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um tempo de verde';
+              }
+              return null;
+            },
+          ),
+
+           TextFormField(
+            controller: _numPhasesController,
+            decoration: InputDecoration(labelText: 'Número de fases'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um número de fases';
               }
               return null;
             },
@@ -197,11 +310,16 @@ class MyCustomFormState extends State<MyCustomForm> {
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
+                    const SnackBar(content: Text('Processando entrada')),
+                  );
+                  _formSubmit();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Erro ao enviar'))
                   );
                 }
               },
-              child: const Text('Submit'),
+              child: const Text('Enviar', style:  TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
             ),
           ),
         ],

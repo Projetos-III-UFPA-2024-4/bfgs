@@ -39,9 +39,33 @@ def get_traffic_state():
     return jsonify(traffic_state)
 
 #endpoint para modificar simulação
-#@app.route('/send-data', methods=['POST'])
-#def send_data():
+@app.route('/change-mode', methods=['POST'])
+def change_mode():
+    data = request.json
+    mode = data.get('mode')
+    print(mode)
 
+    if not mode:
+        return jsonify({'error': 'Missing mode'}), 400
+
+    cursor.execute("INSERT INTO congestion_state.traffic_updates (mode) VALUES (%s)", (mode,))
+    db.commit()
+    return jsonify({'message': 'Succesfully changed mode'})
+
+@app.route('/traffic-change', methods=['POST'])
+def send_data():
+    data = request.json
+    phase_id = data.get('phase_id')
+    cycle_time = data.get('cycle_time')
+    green_time = data.get('green_time')
+    num_phase = data.get('Num_Phase')
+    
+    if not phase_id or not cycle_time or not green_time or not num_phase:
+        return jsonify({'error': 'Missing parameters'}), 400
+    
+    cursor.execute('INSERT INTO congestion_state.traffic_updates_manual (phase_id, cycle_time, green_time, Num_Phases) VALUES (%s, %s, %s, %s)', (phase_id, cycle_time, green_time, num_phase,))
+    db.commit()
+    return jsonify({'message': 'Traffic change committed succesfully'})
 # Endpoint para adicionar um usuário
 @app.route('/users', methods=['POST'])
 def add_user():
