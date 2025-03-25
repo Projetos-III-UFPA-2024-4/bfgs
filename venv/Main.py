@@ -43,9 +43,6 @@ def main():
         # Executa a coleta de dados
         collector.collect(cur, cnx, db_config, step)
 
-        # Executa o controle
-        #controller_flow(cur, db_config)
-    
     # === Encerra a simulação e o banco ===
     traci.close()
     cur.close()

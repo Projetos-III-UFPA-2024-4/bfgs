@@ -1,5 +1,6 @@
 import traci  # Importa a biblioteca TraCI para interagir com o SUMO
 import traffic_utils
+import Controller
 
 class TrafficCollector:
     def __init__(self, myTl):
@@ -100,3 +101,5 @@ class TrafficCollector:
                     self.phase_data = []
                     self.cycle_number += 1
                     print("[Collector] DADOS INSERIDOS")
+
+                    Controller.controller_flow(cur, db_config)
