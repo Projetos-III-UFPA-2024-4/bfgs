@@ -179,7 +179,7 @@ app = Flask(__name__)
 
 @app.route("/optimize", methods =["POST"])
 def optimize():
-    print("🔁 Requisição recebida! Executando otimização...")
+    print("Requisição recebida! Executando otimização...")
     run_optimization()
     return {"status": "ok"}, 200
 
