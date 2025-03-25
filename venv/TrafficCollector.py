@@ -99,13 +99,12 @@ class TrafficCollector:
 
                     cur.execute(query_notification_replace, (1, massage[0]))                           
                     cnx.commit()  # Confirma a transação no banco de dados
-                    self.phase_data = []
-                    self.cycle_number += 1
                     try:
                         requests.post("http://ec2-3-208-30-61.compute-1.amazonaws.com:5000/optimize")
                         print("[Collector] Otimização acionada na nuvem.")
                     except Exception as e:
                         print("[Collector] Erro ao acionar otimização:", e)
                     print("[Collector] DADOS INSERIDOS")
-
+                    self.phase_data = []
+                    self.cycle_number += 1
                     Controller.controller_flow(cur, db_config)
