@@ -96,8 +96,6 @@ def controller_flow(cur, db_config):
     sql = f"SELECT mode FROM {table_man}"
     cur.execute(sql)
     mode = cur.fetchone()[0]
-    print(mode)
-    print(type(mode))
 
     if mode == 1:
         database = table_man
@@ -124,7 +122,6 @@ def controller_flow(cur, db_config):
     for i in range(n_phases):
         greens.append(row_data_raw[i][3])
 
-    print(greens)
         
     traffic_light_id = "Tl1"
     update_green_phases_manually(traffic_light_id, greens)
