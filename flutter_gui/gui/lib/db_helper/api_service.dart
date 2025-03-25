@@ -25,4 +25,16 @@ class ApiService {
       return [];
     }
   }
+
+  static Future<String> fetchTrafficLight() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/traffic-light-states'));
+
+      return json.decode(response.body);
+      
+    } catch (e) {
+      print('Error fetching traffic lights state: $e');
+      return 'error getting lights';
+    }
+  }
 }

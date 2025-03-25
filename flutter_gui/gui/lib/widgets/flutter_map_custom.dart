@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class FlutterMapCustom extends StatelessWidget {
-  FlutterMapCustom({super.key, required this.onButtonPressed, required this.trafficData});
+  FlutterMapCustom({
+      super.key, 
+      required this.onButtonPressed, 
+      required this.trafficData, 
+      required this.trafficLightState
+    });
+
 
   final LatLng _initialCenter = LatLng(-1.412163, -48.442363);
-
+  final String trafficLightState;
   final Function(String) onButtonPressed;
   final List<dynamic> trafficData;
 
 
-  void selectColor() {
-
+  void selectColor(int id) {
+    print(trafficLightState.characters);
   }
 
   @override

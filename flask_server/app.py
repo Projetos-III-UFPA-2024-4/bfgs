@@ -38,6 +38,12 @@ def get_traffic_state():
     traffic_state = cursor.fetchall()
     return jsonify(traffic_state)
 
+@app.route('/traffic-light-states', methods=['GET'])
+def get_traffic_light_state():
+    cursor.execute("SELECT * FROM congestion_state.traffic_light_states")
+    traffic_light_states = cursor.fetchall()
+    return jsonify(traffic_light_states)
+
 #endpoint para modificar simulação
 @app.route('/change-mode', methods=['POST'])
 def change_mode():
@@ -48,11 +54,11 @@ def change_mode():
     if not mode:
         return jsonify({'error': 'Missing mode'}), 400
 
-    cursor.execute("INSERT INTO congestion_state.traffic_updates (mode) VALUES (%s)", (mode,))
+    cursor.execute("REPLACE INTO congestion_state.traffic_updates (mode) VALUES (%s) WHERE id=0", (mode,))
     db.commit()
     return jsonify({'message': 'Succesfully changed mode'})
 
-@app.route('/traffic-change', methods=['POST'])
+@app.route('/traffic-change/<id>', methods=['POST'])
 def send_data():
     data = request.json
     phase_id = data.get('phase_id')
@@ -63,7 +69,7 @@ def send_data():
     if not phase_id or not cycle_time or not green_time or not num_phase:
         return jsonify({'error': 'Missing parameters'}), 400
     
-    cursor.execute('INSERT INTO congestion_state.traffic_updates_manual (phase_id, cycle_time, green_time, Num_Phases) VALUES (%s, %s, %s, %s)', (phase_id, cycle_time, green_time, num_phase,))
+    cursor.execute('REPLACE INTO congestion_state.traffic_updates_manual (phase_id, cycle_time, green_time, Num_Phases) VALUES (%s, %s, %s, %s)', (phase_id, cycle_time, green_time, num_phase,))
     db.commit()
     return jsonify({'message': 'Traffic change committed succesfully'})
 # Endpoint para adicionar um usuário

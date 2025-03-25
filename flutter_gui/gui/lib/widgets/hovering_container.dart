@@ -63,7 +63,7 @@ class HoveringContainer extends StatelessWidget {
               Expanded(
                 child:
                     trafficData.isEmpty
-                        ? Center(child: Text("No notifications available"))
+                        ? Center(child: Text("Sem notificações disponíveis"))
                         : ListView.builder(
                           padding: EdgeInsets.all(8),
                           itemCount: trafficData.length,

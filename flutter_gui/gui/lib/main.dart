@@ -40,8 +40,9 @@ class _MapScreenState extends State<MapScreen> {
   List<dynamic> trafficUpdates = [];
   List<dynamic> trafficNotifications = [];
   bool isTrafficPropsVisible = false;
-  String selectedButton = '';
   bool isNotificationsVisible = false;
+  String selectedButton = '';
+  String trafficLightState = '';
 
 
   Future<void> fetchData(String buttonLabel) async {
@@ -57,6 +58,22 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         trafficUpdates = ['Erro 01: $e'];
         isTrafficPropsVisible = true;
+      });
+    }
+  }
+
+  Future<void> fetchTrafficLightState() async {
+    try {
+      List<dynamic> data = await ApiService.fetchTrafficUpdates();
+
+      setState(() {
+        trafficLightState = data[0]['States'];
+      });
+
+    } catch (e) {
+      print('Error while fetching traffic lights update on main');
+      setState(() {
+        trafficLightState = 'no states found';
       });
     }
   }
@@ -100,7 +117,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [ 
           Row(
             children: [
-              FlutterMapCustom(onButtonPressed: fetchData, trafficData: trafficUpdates,),
+              FlutterMapCustom(onButtonPressed: fetchData, trafficData: trafficUpdates, trafficLightState: trafficLightState),
               if (isTrafficPropsVisible)
                 TrafficLightProperties(
                   selectedButton: selectedButton,

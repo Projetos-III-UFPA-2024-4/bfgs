@@ -19,11 +19,11 @@ class TrafficLightProperties extends StatelessWidget {
       case 'LA':
         return 1;
       case 'LB':
-        return 2;
+        return 1;
       case 'LC':
-        return 3;
+        return 2;
       case 'LD':
-        return 4;
+        return 2;
       default:
         return -1;
     }
@@ -77,9 +77,15 @@ class TrafficLightProperties extends StatelessWidget {
                             ? '${trafficData[trafficData.length - findDataId()]['green_time'].toStringAsFixed(2)} s'
                             : 'Green time not found',
                   ),
+                  PropCard(
+                    title: 'Número de Fases',
+                    propItem: 
+                    trafficData.isNotEmpty ? '${trafficData[trafficData.length - findDataId()]['Num_Phases']}' : 'Phase number not found'
+                  )
                 ],
               ),
             ),
+            SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -129,7 +135,7 @@ class PropCard extends StatelessWidget {
 
 class SendData extends StatelessWidget {
   const SendData({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -185,7 +191,6 @@ class MyCustomFormState extends State<MyCustomForm> {
 
     if(_formKey.currentState!.validate()) {
       try {
-
         final response = await http.post(
           Uri.parse(apiUrl),
           headers: <String, String>{
@@ -247,16 +252,17 @@ class MyCustomFormState extends State<MyCustomForm> {
       }
   }
 
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
+    return Form(      
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          ElevatedButton(onPressed: _changeMode, child: Text('Trocar Modo', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+          ElevatedButton(onPressed: _changeMode, child: Text('Modo Manual', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
           TextFormField(
             controller: _phaseController,
             decoration: InputDecoration(labelText: 'Fase'),
@@ -304,6 +310,7 @@ class MyCustomFormState extends State<MyCustomForm> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: ElevatedButton(
+              
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
