@@ -34,25 +34,29 @@ class TrafficLightProperties extends StatelessWidget {
     return Expanded(
       flex: 2,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(2),
         color: Colors.blueGrey[100],
-        child: Column(
+        child: Column(          
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
                   'Dados para: $selectedButton',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 IconButton(icon: Icon(Icons.close), onPressed: onClose),
               ],
             ),
-            Divider(),
-            Expanded(
-              flex: 1,
+            Divider(height: 0.5,),
+            Container(
+              height: 187,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   PropCard(
                     title: 'Id de Fase',
@@ -85,17 +89,18 @@ class TrafficLightProperties extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 4,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
                   'Comandos',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             Divider(),
+            
             SendData(),
           ],
         ),
@@ -114,8 +119,10 @@ class PropCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.green[200],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: EdgeInsets.all(0.3),
       child: ListTile(
+        minTileHeight: 30,
         title: Text(
           title,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -191,7 +198,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
 
   Future<void> _formSubmit()  async {
-    final String apiUrl = 'http://localhost:5000/traffic-change';
+    final String apiUrl = 'http://localhost:5001/traffic-change';
 
     if(_formKey.currentState!.validate()) {
       try {
@@ -229,7 +236,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 
 
   void _changeMode() async {
-    final String apiUrl = 'http://localhost:5000/change-mode';
+    final String apiUrl = 'http://localhost:5001/change-mode';
 
     try {
         final response = await http.post(
@@ -259,125 +266,130 @@ class MyCustomFormState extends State<MyCustomForm> {
     // Build a Form widget using the _formKey created above.
     return Form(      
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ElevatedButton(onPressed: _changeMode, child: Text('Modo Automático', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
-          SizedBox(height: 15,),
-          Text('Fases LA e LB', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          TextFormField(
-            controller: _phaseController,
-            decoration: InputDecoration(labelText: 'Fase'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira a fase';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _cycleTimeController,
-            decoration: InputDecoration(labelText: 'Ciclo'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um ciclo';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _greenTimeController,
-            decoration: InputDecoration(labelText: 'Tempo de Verde'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um tempo de verde';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _numPhasesController,
-            decoration: InputDecoration(labelText: 'Número de fases'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um número de fases';
-              }
-              return null;
-            },
-          ),
-          SizedBox(height: 10,),
-          Text('Fases LC e LD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          TextFormField(
-            controller: _phaseControllerA,
-            decoration: InputDecoration(labelText: 'Fase'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira a fase';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _cycleTimeControllerA,
-            decoration: InputDecoration(labelText: 'Ciclo'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um ciclo';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _greenTimeControllerA,
-            decoration: InputDecoration(labelText: 'Tempo de Verde'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um tempo de verde';
-              }
-              return null;
-            },
-          ),
-
-          TextFormField(
-            controller: _numPhasesControllerA,
-            decoration: InputDecoration(labelText: 'Número de fases'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Insira um número de fases';
-              }
-              return null;
-            },
-          ),
+      child: Expanded(
+        child: Column(
           
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: ElevatedButton(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          
+          children: [
+            ElevatedButton(onPressed: _changeMode, child: Text('Modo Automático', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 10))),
+            SizedBox(height: 1,),
+            Text('Fases LA e LB', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+            TextFormField(
               
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processando entrada')),
-                  );
-                  _formSubmit();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Erro ao enviar'))
-                  );
+              controller: _phaseController,
+              decoration: InputDecoration(labelText: 'Fase'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira a fase';
                 }
+                return null;
               },
-              child: const Text('Enviar', style:  TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
             ),
-          ),
-        ],
+        
+            TextFormField(
+              controller: _cycleTimeController,
+              decoration: InputDecoration(labelText: 'Ciclo'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um ciclo';
+                }
+                return null;
+              },
+            ),
+        
+            TextFormField(
+              controller: _greenTimeController,
+              decoration: InputDecoration(labelText: 'Tempo de Verde'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um tempo de verde';
+                }
+                return null;
+              },
+            ),
+        
+            TextFormField(
+              controller: _numPhasesController,
+              decoration: InputDecoration(labelText: 'Número de fases'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um número de fases';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 10,),
+            Text('Fases LC e LD', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+            TextFormField(
+              controller: _phaseControllerA,
+              decoration: InputDecoration(labelText: 'Fase'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira a fase';
+                }
+                return null;
+              },
+            ),
+        
+            TextFormField(
+              controller: _cycleTimeControllerA,
+              decoration: InputDecoration(labelText: 'Ciclo'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um ciclo';
+                }
+                return null;
+              },
+            ),
+        
+            TextFormField(
+              controller: _greenTimeControllerA,
+              decoration: InputDecoration(labelText: 'Tempo de Verde'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um tempo de verde';
+                }
+                return null;
+              },
+            ),
+        
+            TextFormField(
+              controller: _numPhasesControllerA,
+              decoration: InputDecoration(labelText: 'Número de fases'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insira um número de fases';
+                }
+                return null;
+              },
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: ElevatedButton(
+                
+                onPressed: () {
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Processando entrada')),
+                    );
+                    _formSubmit();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Erro ao enviar'))
+                    );
+                  }
+                },
+                child: const Text('Enviar', style:  TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 10)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -22,7 +22,16 @@ class MyApp extends StatelessWidget {
         listTileTheme: ListTileThemeData(
           iconColor: Colors.green[600],
           textColor: Colors.green[900],
+          
         ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(fontSize: 18.0),
+          bodyMedium: TextStyle(fontSize: 16.0),
+          bodySmall: TextStyle(fontSize: 14.0),
+          titleLarge: TextStyle(fontSize: 22.0),
+          titleMedium: TextStyle(fontSize: 20.0),
+          titleSmall: TextStyle(fontSize: 18.0),
+        ).apply(fontSizeFactor: 0.6),
       ),
       home: MapScreen(),
     );

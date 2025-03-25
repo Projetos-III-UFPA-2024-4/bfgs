@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:5000';
+  static const String baseUrl = 'http://localhost:5001';
 
   static Future<List<dynamic>> fetchTrafficUpdates() async {
     try {
@@ -37,4 +37,6 @@ class ApiService {
       return 'error getting lights';
     }
   }
+
+  
 }

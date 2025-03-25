@@ -70,7 +70,7 @@ List<String> detectSemaphoreColors(String input) {
                     onButtonPressed('LB');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ,
+                    backgroundColor: Colors.red,
                   ),
                   child: const Text("LB", style:  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
