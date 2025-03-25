@@ -1,6 +1,7 @@
 import traci  # Importa a biblioteca TraCI para interagir com o SUMO
 import traffic_utils
 import Controller
+import requests
 
 class TrafficCollector:
     def __init__(self, myTl):
@@ -100,6 +101,11 @@ class TrafficCollector:
                     cnx.commit()  # Confirma a transação no banco de dados
                     self.phase_data = []
                     self.cycle_number += 1
+                    try:
+                        requests.post("http://ec2-3-208-30-61.compute-1.amazonaws.com:5000/optimize")
+                        print("[Collector] Otimização acionada na nuvem.")
+                    except Exception as e:
+                        print("[Collector] Erro ao acionar otimização:", e)
                     print("[Collector] DADOS INSERIDOS")
 
                     Controller.controller_flow(cur, db_config)
