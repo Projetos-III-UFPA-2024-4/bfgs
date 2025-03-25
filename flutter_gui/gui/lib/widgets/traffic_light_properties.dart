@@ -89,7 +89,6 @@ class TrafficLightProperties extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-        
                 Text(
                   'Comandos',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -171,9 +170,14 @@ class MyCustomFormState extends State<MyCustomForm> {
   final _cycleTimeController = TextEditingController();
   final _greenTimeController = TextEditingController();
   final _numPhasesController = TextEditingController();
+  final _phaseControllerA = TextEditingController();
+  final _cycleTimeControllerA = TextEditingController();
+  final _greenTimeControllerA = TextEditingController();
+  final _numPhasesControllerA = TextEditingController();
   String result = '';
   int modeState = 0;
   bool isFormEnabled = false;
+  String buttonTextString = 'Modo manual';
 
 
   @override
@@ -197,10 +201,17 @@ class MyCustomFormState extends State<MyCustomForm> {
             'Content-Type': 'application/json;charset=UTF-8',
           },
           body: jsonEncode(<String, dynamic>{
+            'ide': _phaseController.text,
             'phase_id': _phaseController.text,
             'cycle_time': _cycleTimeController.text,
             'green_time': _greenTimeController.text,
             'Num_Phase': _numPhasesController.text,
+            'mode': '1',
+            'ide_a': _phaseControllerA.text,
+            'phase_id_a': _phaseControllerA.text,
+            'cycle_time_a': _cycleTimeControllerA.text,
+            'green_time_a': _greenTimeControllerA.text,
+            'Num_Phase_a': _numPhasesControllerA.text,
           }),
         );
         
@@ -220,24 +231,14 @@ class MyCustomFormState extends State<MyCustomForm> {
   void _changeMode() async {
     final String apiUrl = 'http://localhost:5000/change-mode';
 
-    if (modeState == 0) {
-      setState(() {
-        modeState = 1;
-      });
-    } else {
-      setState(() {
-        modeState = 0;
-      });
-    }
-
     try {
         final response = await http.post(
           Uri.parse(apiUrl),
           headers: <String, String>{
             'Content-Type': 'application/json;charset=UTF-8',
           },
-          body: jsonEncode(<String, int>{
-            'mode': 1,
+          body: jsonEncode(<String, String>{
+            'mode': '0',
           }),
         );
         
@@ -262,7 +263,9 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          ElevatedButton(onPressed: _changeMode, child: Text('Modo Manual', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+          ElevatedButton(onPressed: _changeMode, child: Text('Modo Automático', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+          SizedBox(height: 15,),
+          Text('Fases LA e LB', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
           TextFormField(
             controller: _phaseController,
             decoration: InputDecoration(labelText: 'Fase'),
@@ -272,7 +275,6 @@ class MyCustomFormState extends State<MyCustomForm> {
               }
               return null;
             },
-            
           ),
 
           TextFormField(
@@ -286,7 +288,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
 
-           TextFormField(
+          TextFormField(
             controller: _greenTimeController,
             decoration: InputDecoration(labelText: 'Tempo de Verde'),
             validator: (value) {
@@ -297,7 +299,7 @@ class MyCustomFormState extends State<MyCustomForm> {
             },
           ),
 
-           TextFormField(
+          TextFormField(
             controller: _numPhasesController,
             decoration: InputDecoration(labelText: 'Número de fases'),
             validator: (value) {
@@ -307,6 +309,52 @@ class MyCustomFormState extends State<MyCustomForm> {
               return null;
             },
           ),
+          SizedBox(height: 10,),
+          Text('Fases LC e LD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+          TextFormField(
+            controller: _phaseControllerA,
+            decoration: InputDecoration(labelText: 'Fase'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira a fase';
+              }
+              return null;
+            },
+          ),
+
+          TextFormField(
+            controller: _cycleTimeControllerA,
+            decoration: InputDecoration(labelText: 'Ciclo'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um ciclo';
+              }
+              return null;
+            },
+          ),
+
+          TextFormField(
+            controller: _greenTimeControllerA,
+            decoration: InputDecoration(labelText: 'Tempo de Verde'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um tempo de verde';
+              }
+              return null;
+            },
+          ),
+
+          TextFormField(
+            controller: _numPhasesControllerA,
+            decoration: InputDecoration(labelText: 'Número de fases'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Insira um número de fases';
+              }
+              return null;
+            },
+          ),
+          
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: ElevatedButton(

@@ -49,42 +49,39 @@ def get_traffic_light_state():
 def change_mode():
     data = request.json
     mode = data.get('mode')
-    print(mode)
 
     if not mode:
         return jsonify({'error': 'Missing mode'}), 400
-
-    cursor.execute("REPLACE INTO congestion_state.traffic_updates (mode) VALUES (%s) WHERE id=0", (mode,))
+    cursor.execute("DELETE FROM traffic_updates_manual")
+    cursor.execute("INSERT INTO traffic_updates_manual (id, phase_id, cycle_time, green_time, Num_Phases, mode) VALUES (1, 0, 0, 0, 0, %s)", (mode, ))
     db.commit()
     return jsonify({'message': 'Succesfully changed mode'})
 
-@app.route('/traffic-change/<id>', methods=['POST'])
+@app.route('/traffic-change', methods=['POST'])
 def send_data():
     data = request.json
+    ide = data.get('ide')
     phase_id = data.get('phase_id')
     cycle_time = data.get('cycle_time')
     green_time = data.get('green_time')
+   
+    ide_a = data.get('ide_a')
+    phase_id_a = data.get('phase_id_a')
+    cycle_time_a = data.get('cycle_time_a')
+    green_time_a = data.get('green_time_a')
+
+    mode = data.get('mode')
     num_phase = data.get('Num_Phase')
     
-    if not phase_id or not cycle_time or not green_time or not num_phase:
+    if not phase_id or not cycle_time or not green_time or not num_phase or not mode:
         return jsonify({'error': 'Missing parameters'}), 400
+    cursor.execute("DELETE FROM traffic_updates_manual")
+
     
-    cursor.execute('REPLACE INTO congestion_state.traffic_updates_manual (phase_id, cycle_time, green_time, Num_Phases) VALUES (%s, %s, %s, %s)', (phase_id, cycle_time, green_time, num_phase,))
+    cursor.execute("INSERT INTO traffic_updates_manual (id, phase_id, cycle_time, green_time, Num_Phases, mode) VALUES (%s,%s, %s, %s, %s, %s)", (ide, phase_id, cycle_time, green_time, num_phase, mode, ))
+    cursor.execute("INSERT INTO traffic_updates_manual (id, phase_id, cycle_time, green_time, Num_Phases, mode) VALUES (%s,%s, %s, %s, %s, %s)", (ide_a, phase_id_a, cycle_time_a, green_time_a, num_phase, mode, ))
     db.commit()
     return jsonify({'message': 'Traffic change committed succesfully'})
-# Endpoint para adicionar um usuário
-@app.route('/users', methods=['POST'])
-def add_user():
-    data = request.json
-    name = data.get('name')
-    age = data.get('age')
-
-    if not name or not age:
-        return jsonify({'error': 'Missing name or age'}), 400
-
-    cursor.execute("INSERT INTO users (name, age) VALUES (%s, %s)", (name, age))
-    db.commit()
-    return jsonify({'message': 'User added successfully'}), 201
 
 @app.route('/notifications', methods=['GET'])
 def get_notifications():

@@ -17,9 +17,27 @@ class FlutterMapCustom extends StatelessWidget {
   final List<dynamic> trafficData;
 
 
-  void selectColor(int id) {
-    print(trafficLightState.characters);
-  }
+List<String> detectSemaphoreColors(String input) {
+  // Convert to lowercase to handle case insensitivity
+  String lowerInput = input.toLowerCase();
+
+  // Define the mapping of characters to colors
+  Map<String, String> colorMap = {
+    'r': 'red',
+    'y': 'yellow',
+    'g': 'green'
+  };
+
+  // Get the unique characters in order of appearance
+  List<String> uniqueChars = lowerInput.split('').toSet().toList();
+
+  // Map detected characters to colors, filtering valid ones safely
+  List<String> colors = uniqueChars.map((char) => colorMap[char]).whereType<String>().toList();
+
+  return colors;
+
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +70,7 @@ class FlutterMapCustom extends StatelessWidget {
                     onButtonPressed('LB');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: ,
                   ),
                   child: const Text("LB", style:  TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                 ),

@@ -60,6 +60,8 @@ class _MapScreenState extends State<MapScreen> {
         isTrafficPropsVisible = true;
       });
     }
+
+    print(trafficLightState);
   }
 
   Future<void> fetchTrafficLightState() async {
