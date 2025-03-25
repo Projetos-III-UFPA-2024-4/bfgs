@@ -1,6 +1,6 @@
 import os # Module provides functions to handle file paths, directories, environment variables
 import sys # Module provides access to Python-specific system parameters and functions
-import algorithm as al
+import Traffic_Optimization.algorithm_nestor as al
 
 # Step 2: Establish path to SUMO (SUMO_HOME)
 if 'SUMO_HOME' in os.environ:

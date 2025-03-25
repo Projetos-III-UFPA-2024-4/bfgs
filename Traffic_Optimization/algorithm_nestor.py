@@ -1,5 +1,4 @@
 import mysql.connector as mc
-from flask import Flask
 
 min_green = 15
 sf_default = 1800
@@ -96,7 +95,7 @@ def db_update(sinal: Trffclght, cursor, db, table: str):
     db.commit()
     print(cursor.rowcount, "record inserted.")
 
-def run_optimization():
+def main():
 
     cycle_reference = 0
     observed_flow = []
@@ -104,84 +103,79 @@ def run_optimization():
     sf = [] #1800 default
     #counter = 0
 
-    #initial setup
-    db_gt = connect(
-        "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
-        "root",
-        "bfgs2024",
-        "congestion_state"
-        )
-    cursor_selector = db_gt.cursor(buffered=True)
-    cursor_selector.execute("SELECT Cycle_Number FROM congestion_data")
-    cycle_number = cursor_selector.fetchone()[0]
+    while(True):
+        #initial setup
+        db_gt = connect(
+            "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
+            "root",
+            "bfgs2024",
+            "congestion_state"
+            )
+        cursor_selector = db_gt.cursor(buffered=True)
+        cursor_selector.execute("SELECT Cycle_Number FROM congestion_data")
+        cycle_number = cursor_selector.fetchone()[0]
 
-    '''if(counter == 10 ):
-        a = input("keep going?\n")
-        counter = 0
-        if (a == "n"):
+        '''if(counter == 10 ):
+            a = input("keep going?\n")
+            counter = 0
+            if (a == "n"):
+                cursor_selector.close()
+                db_gt.close()
+                exit()
+
+        counter += 1'''
+
+        if(cycle_number == cycle_reference and cycle_number != 0):
+            print("nothing to be done")
             cursor_selector.close()
             db_gt.close()
-            exit()
+            continue
 
-    counter += 1'''
+        cycle_reference = cycle_number
+        cursor_selector.execute("SELECT Num_phases FROM congestion_data")
+        num_phases = cursor_selector.fetchone()[0]
 
-    if(cycle_number == cycle_reference and cycle_number != 0):
-        print("nothing to be done")
+
+        all_critical_flow = 0
+        observed_flow.clear()
+        phases.clear()
+
+        cursor_selector.execute("SELECT Phase_Index, Observed_Flow, Critical_Flow, Critical_Flow_TOTAL FROM congestion_data")
+        data = cursor_selector.fetchall()
+        for i in range(num_phases):
+            phases.append(int(data[i][0]/2)+1)
+            observed_flow.append(int(data[i][1]))
+            all_critical_flow = data[0][3]
+
+
+        #defines the saturation flow list
+        sf.clear()
+        for i in range(num_phases):
+            sf.append(sf_default)
+
+        #sets the trafficlight object
+        sinal = Trffclght(num_phases, all_critical_flow, observed_flow, sf, phases)
+        sinal.update(all_critical_flow, observed_flow, sf)
+
         cursor_selector.close()
         db_gt.close()
 
-    cycle_reference = cycle_number
-    cursor_selector.execute("SELECT Num_phases FROM congestion_data")
-    num_phases = cursor_selector.fetchone()[0]
+        # saving the data
+        db_in = connect(
+            "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
+            "root",
+            "bfgs2024",
+            "congestion_state"
+            )
+        cursor_in = db_in.cursor(buffered=True)
+
+        db_clean(cursor_in, db_in, "traffic_updates")
+
+        db_update(sinal, cursor_in, db_in, "traffic_updates")
+
+        cursor_in.close()
+        db_in.close()
 
 
-    all_critical_flow = 0
-    observed_flow.clear()
-    phases.clear()
-
-    cursor_selector.execute("SELECT Phase_Index, Observed_Flow, Critical_Flow, Critical_Flow_TOTAL FROM congestion_data")
-    data = cursor_selector.fetchall()
-    for i in range(num_phases):
-        phases.append(int(data[i][0]/2)+1)
-        observed_flow.append(int(data[i][1]))
-        all_critical_flow = data[0][3]
-
-
-    #defines the saturation flow list
-    sf.clear()
-    for i in range(num_phases):
-        sf.append(sf_default)
-
-    #sets the trafficlight object
-    sinal = Trffclght(num_phases, all_critical_flow, observed_flow, sf, phases)
-    sinal.update(all_critical_flow, observed_flow, sf)
-
-    cursor_selector.close()
-    db_gt.close()
-
-    # saving the data
-    db_in = connect(
-        "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
-        "root",
-        "bfgs2024",
-        "congestion_state"
-        )
-    cursor_in = db_in.cursor(buffered=True)
-
-    db_clean(cursor_in, db_in, "traffic_updates")
-
-    db_update(sinal, cursor_in, db_in, "traffic_updates")
-
-    cursor_in.close()
-    db_in.close()
-
-app = Flask(__name__)
-
-@app.route("/optimize", methods =["POST"])
-def optimize():
-    print("🔁 Requisição recebida! Executando otimização...")
-    run_optimization()
-    return {"status": "ok"}, 200
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    main()
