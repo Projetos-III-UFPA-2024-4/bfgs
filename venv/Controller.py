@@ -62,10 +62,22 @@ def connect(host, user, password, database):
 
     return db
 
-def controller_flow(cur, db_config, counter = None):
 
-    table_auto = db_config["traffic_updates"]
-    table_man = db_config["traffic_updates_manual"]
+def has_data(cur, database: str) -> bool:
+    sql = f"SELECT mode FROM {database}"
+    cur.execute(sql)
+
+    row = cur.fetchone()
+    if row is not None:
+        return True
+
+    return False
+
+
+def controller_flow(cur, db_config):
+
+    table_auto = "traffic_updates"
+    table_man = "traffic_updates_manual"
 
     '''if (counter % 10 == 0 and counter != 0):
         a = input("keep going?\n")
@@ -75,41 +87,59 @@ def controller_flow(cur, db_config, counter = None):
             traci.close()
             exit()'''
 
-    sql = f"SELECT mode FROM {table_auto}"
+    if (not has_data(cur, table_man)):
+        time.sleep(1)
+        print("[CONTROLLER] No mode selected...")
+        return
+
+
+    sql = f"SELECT mode FROM {table_man}"
     cur.execute(sql)
     mode = cur.fetchone()[0]
-    print(f"mode {mode}")
+    print(mode)
+    print(type(mode))
 
-    if (mode == 1):
+    if mode == 1:
         database = table_man
+        if (not has_data(cur, database)):
+            print("[CONTROLLER] Manual mode: Waiting for order...")
+            return
 
-        while True:
-            sql = f"SELECT mode FROM {database}"
-            cur.execute(sql)
-            row = cur.fetchone()
-            if row is None:
-                break
-            print("[Controller] Modo manual ativo. Aguardando liberação...")
-            time.sleep(2)
-
-    else:#(mode == 0)
+    else:
         database = table_auto
+        time.sleep(1)
+        if (not has_data(cur,  database)):
+            print("[CONTROLLER] Automatic mode: Waiting for the data...")
+            return
 
     # Busca os tempos otimizados
     sql = f"SELECT * FROM {database}"
     cur.execute(sql)
     row_data_raw = cur.fetchall()
 
-    if not row_data_raw:
-        print("[Controller] Nenhum dado de otimização encontrado.")
-        return
-
     n_phases = int(row_data_raw[0][4])
     greens = []
-    cycle_time = row_data_raw[0][2]
+    #cycle_time = row_data_raw[0][2]
 
     for i in range(n_phases):
         greens.append(row_data_raw[i][3])
+
+    print(greens)
         
     traffic_light_id = "Tl1"
     update_green_phases_manually(traffic_light_id, greens)
+
+
+cnx = connect(
+    "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
+    "root",
+    "bfgs2024",
+    "congestion_state"
+    )
+cursor = cnx.cursor(buffered=True)
+controller_flow(cursor, cnx)
+
+cursor.close()
+cnx.close()
+
+
