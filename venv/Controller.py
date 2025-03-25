@@ -126,7 +126,7 @@ def controller_flow(cur, db_config):
     traffic_light_id = "Tl1"
     update_green_phases_manually(traffic_light_id, greens)
 
-
+'''
 cnx = connect(
     "congestion-state.c02vqeowqrft.us-east-1.rds.amazonaws.com",
     "root",
@@ -138,5 +138,5 @@ controller_flow(cursor, cnx)
 
 cursor.close()
 cnx.close()
-
+'''
 

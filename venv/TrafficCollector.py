@@ -43,15 +43,16 @@ class TrafficCollector:
         """
 
         current_phase = traci.trafficlight.getPhase(self.myTl)
-
+        '''
         if current_phase != self.last_phase:
+                    
             previous_state = traffic_utils.get_tls_states(self.myTl)
             cur.execute(query_states_replace, (1, previous_state))
             cnx.commit()              
 
             self.last_phase = current_phase
             print("[Collector] Estados inseridos")
-
+        '''
         # Se a fase atual for uma fase verde
         if current_phase in self.green_phases:
             phase_duration = self.phases[current_phase].duration  # Obtém a duração da fase atual
@@ -100,7 +101,7 @@ class TrafficCollector:
                     cur.execute(query_notification_replace, (1, massage[0]))                           
                     cnx.commit()  # Confirma a transação no banco de dados
                     try:
-                        requests.post("http://ec2-3-208-30-61.compute-1.amazonaws.com:5000/optimize")
+                        requests.post("http://ec2-54-162-236-6.compute-1.amazonaws.com/optimize")
                         print("[Collector] Otimização acionada na nuvem.")
                     except Exception as e:
                         print("[Collector] Erro ao acionar otimização:", e)

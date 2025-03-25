@@ -2,7 +2,7 @@ import mysql.connector as mc
 from flask import Flask
 
 min_green = 15
-sf_default = 1800
+sf_default = 1000
 
 
 class Trffclght:

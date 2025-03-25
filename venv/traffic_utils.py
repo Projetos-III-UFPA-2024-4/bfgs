@@ -19,7 +19,7 @@ def update_detector_counts(detectors, total_count):
     return total_count
 
 
-def calculate_critical_flow(observed_flow, S_i=1800):
+def calculate_critical_flow(observed_flow, S_i=1000):
     """
     Calcula o fluxo crítico com base no número de veículos observados e na capacidade de saturação.
 
