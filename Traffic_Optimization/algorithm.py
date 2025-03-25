@@ -177,6 +177,10 @@ def run_optimization():
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return {"message": "API esta online"}, 200
+
 @app.route("/optimize", methods =["POST"])
 def optimize():
     print("Requisição recebida! Executando otimização...")
