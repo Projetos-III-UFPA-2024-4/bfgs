@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-03-24 22:20:02 by Eclipse SUMO GUI Version 1.22.0
+<!-- generated on 2025-03-25 04:54:41 by Eclipse SUMO GUI Version 1.22.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="data_apresentação/osm.net.xml"/>
-        <route-files value="data_apresentação/osm.rou.xml"/>
-        <additional-files value="data_apresentação/osm.add.xml"/>
+        <net-file value=".\osm.net.xml"/>
+        <route-files value=".\osm.rou.xml"/>
+        <additional-files value=".\osm.add.xml"/>
     </input>
 
-    <time>
-        <step-length value="0.1"/>
-    </time>
-
-    <processing>
-        <lateral-resolution value="0.5"/>
-    </processing>
-
-    <traci_server>
-        <remote-port value="57465"/>
-    </traci_server>
-
     <gui_only>
-        <delay value="60"/>
+        <gui-settings-file value=".\viewpoint.xml"/>
     </gui_only>
 
 </sumoConfiguration>
 -->
 
 <detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e1_file.xsd">
-    <interval begin="0.00" end="129.20" id="e1_1" nVehContrib="29" flow="808.05" occupancy="29.46" speed="8.30" harmonicMeanSpeed="3.81" length="5.00" nVehEntered="29"/>
+    <interval begin="0.00" end="138.00" id="e1_1" nVehContrib="8" flow="208.70" occupancy="4.77" speed="8.03" harmonicMeanSpeed="6.17" length="5.00" nVehEntered="9"/>
 </detector>
